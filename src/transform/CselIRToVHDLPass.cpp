@@ -28,7 +28,7 @@ using namespace libcsel_be;
 char CselIRToVHDLPass::id = 0;
 
 static libpass::PassRegistration< CselIRToVHDLPass > PASS(
-    "CSEL IR to VHDL", "generates VDHL code out of the CSEL IR", 0, 0 );
+    "CSEL IR to VHDL", "generates VDHL code out of the CSEL IR", "el2vhdl", 0 );
 
 static FILE* stream = stderr;
 

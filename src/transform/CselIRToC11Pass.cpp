@@ -28,7 +28,7 @@ using namespace libcsel_be;
 char CselIRToC11Pass::id = 0;
 
 static libpass::PassRegistration< CselIRToC11Pass > PASS(
-    "CSEL IR to C11", "generates C11 code out of the CSEL IR", 0, 0 );
+    "CSEL IR to C11", "generates C11 code out of the CSEL IR", "el2c11", 0 );
 
 static FILE* stream = stderr;
 

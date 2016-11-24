@@ -27,8 +27,8 @@ using namespace libcsel_be;
 
 char CselIRToLLPass::id = 0;
 
-static libpass::PassRegistration< CselIRToLLPass > PASS(
-    "CSEL IR to LLVM IR", "generates LLVM IR code out of the CSEL IR", 0, 0 );
+static libpass::PassRegistration< CselIRToLLPass > PASS( "CSEL IR to LLVM IR",
+    "generates LLVM IR code out of the CSEL IR", "el2ll", 0 );
 
 static FILE* stream = stderr;
 
