@@ -23,6 +23,7 @@
 
 #include "CselIRToVHDLPass.h"
 
+using namespace libcsel_ir;
 using namespace libcsel_be;
 
 char CselIRToVHDLPass::id = 0;

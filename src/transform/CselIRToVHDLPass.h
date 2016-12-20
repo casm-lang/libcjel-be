@@ -27,8 +27,6 @@
 #include "libcsel-be.all.h"
 #include "libpass.h"
 
-using namespace libcsel_ir;
-
 namespace libcsel_be
 {
     class CselIRToVHDLPass : public libpass::Pass, public libcsel_ir::Visitor

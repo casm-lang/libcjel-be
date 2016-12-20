@@ -23,6 +23,6 @@
 
 #include "gtest/gtest.h"
 
-TEST( libcasm_fe, example )
+TEST( libcsel_be, example )
 {
 }

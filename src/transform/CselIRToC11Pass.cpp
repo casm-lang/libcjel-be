@@ -23,6 +23,7 @@
 
 #include "CselIRToC11Pass.h"
 
+using namespace libcsel_ir;
 using namespace libcsel_be;
 
 char CselIRToC11Pass::id = 0;
