@@ -38,7 +38,7 @@ bool CselIRToLLPass::run( libpass::PassResult& pr )
     Module* value = (Module*)pr.getResult< libcsel_ir::CselIRDumpPass >();
     assert( value );
 
-    string fn = "obj/" + string( value->getName() ) + ".vhd";
+    std::string fn = "obj/" + std::string( value->getName() ) + ".vhd";
     stream = fopen( fn.c_str(), "w" );
 
     value->iterate( Traversal::PREORDER, this );
@@ -58,7 +58,7 @@ static const char* getTypeString( Value& value )
 
     if( type->getIDKind() == Type::ID::BIT )
     {
-        string t = "i" + to_string( type->getBitsize() );
+        std::string t = "i" + std::to_string( type->getBitsize() );
         return t.c_str();
     }
     else if( type->getIDKind() == Type::ID::STRUCTURE )

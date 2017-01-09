@@ -41,7 +41,7 @@ bool CselIRToC11Pass::run( libpass::PassResult& pr )
     assert( value );
     module = value;
 
-    string fn = "obj/" + string( value->getName() ) + ".c";
+    std::string fn = "obj/" + std::string( value->getName() ) + ".c";
     stream = fopen( fn.c_str(), "w" );
 
     value->iterate( Traversal::PREORDER, this );
@@ -71,21 +71,21 @@ static const char* getTypeString( Value& value )
 
         assert( bitsize_type <= 64 );
 
-        string t = "uint" + to_string( bitsize_type ) + "_t";
+        std::string t = "uint" + std::to_string( bitsize_type ) + "_t";
         return libstdhl::Allocator::string( t );
     }
     else if( type->getIDKind() == Type::STRUCTURE )
     {
         Value* ty = type->getBound();
         assert( Value::isa< Structure >( ty ) );
-        string t = string( ( (Structure*)ty )->getName() );
+        std::string t = std::string( ( (Structure*)ty )->getName() );
         return libstdhl::Allocator::string( t );
     }
     else if( type->getIDKind() == Type::MEMORY )
     {
         Value* ty = type->getBound();
         assert( Value::isa< Memory >( ty ) );
-        string t = string( ( (Memory*)ty )->getStructure()->getName() ) + "*";
+        std::string t = std::string( ( (Memory*)ty )->getStructure()->getName() ) + "*";
         return libstdhl::Allocator::string( t );
     }
     else if( type->getIDKind() == Type::INTERCONNECT )
@@ -104,7 +104,7 @@ static const char* getTypeString( Value& value )
 
 static const char* indention( Value& value )
 {
-    string ind = "";
+    std::string ind = "";
     u8 cnt = 0;
     Value* p = ( &value );
     while( p != 0 )
@@ -222,7 +222,7 @@ void CselIRToC11Pass::visit_interlog( Function& value )
                 Memory* mem = (Memory*)origin;
 
                 const char* mem_type = getTypeString( *mem );
-                std::string tmp = string( mem_type );
+                std::string tmp = std::string( mem_type );
                 tmp[ tmp.size() - 1 ] = '\0';
 
                 fprintf( stream,
@@ -797,14 +797,14 @@ void CselIRToC11Pass::visit_prolog( StreamInstruction& value )
 
     const char* channel = "stdout";
 
-    string fmt = "\"";
-    string arg = "";
+    std::string fmt = "\"";
+    std::string arg = "";
     for( Value* i : value.getValues() )
     {
         if( Value::isa< Variable >( i ) )
         {
             fmt += "%p";
-            arg += ", &" + arg += string( i->getLabel() );
+            arg += ", &" + arg += std::string( i->getLabel() );
         }
         else if( Value::isa< StringConstant >( i ) )
         {
@@ -865,7 +865,7 @@ void CselIRToC11Pass::visit_prolog( IdInstruction& value )
     {
         CallableUnit* c = (CallableUnit*)value.get();
         u64 id_num = c->getAllocationID()->getValue()[ 0 ];
-        id = libstdhl::Allocator::string( to_string( id_num ) );
+        id = libstdhl::Allocator::string( std::to_string( id_num ) );
     }
 
     fprintf( stream, "%s%s %s = (%s)%s;// id\n", indention( value ),

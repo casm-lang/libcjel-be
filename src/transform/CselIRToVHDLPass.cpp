@@ -45,7 +45,7 @@ bool CselIRToVHDLPass::run( libpass::PassResult& pr )
     assert( value );
     module = value;
 
-    string fn = "obj/" + string( value->getName() ) + ".vhd";
+    std::string fn = "obj/" + std::string( value->getName() ) + ".vhd";
     stream = fopen( fn.c_str(), "w" );
 
     value->iterate( Traversal::PREORDER, this );
@@ -72,8 +72,8 @@ static const char* getTypeString( Value& value )
         }
         else if( type->getBitsize() > 1 )
         {
-            string t = "std_logic_vector( "
-                       + to_string( type->getBitsize() - 1 ) + " downto 0 )";
+            std::string t = "std_logic_vector( "
+                       + std::to_string( type->getBitsize() - 1 ) + " downto 0 )";
             return libstdhl::Allocator::string( t );
         }
         else
@@ -84,8 +84,8 @@ static const char* getTypeString( Value& value )
                 assert( Value::isa< Interconnect >( bind ) );
                 Interconnect* ict = (Interconnect*)bind;
 
-                string t = "std_logic_vector( "
-                           + to_string( ict->getBitsizeMax() - 1 )
+                std::string t = "std_logic_vector( "
+                           + std::to_string( ict->getBitsizeMax() - 1 )
                            + " downto 0 )";
                 return libstdhl::Allocator::string( t );
             }
@@ -97,7 +97,7 @@ static const char* getTypeString( Value& value )
     {
         Value* ty = type->getBound();
         assert( Value::isa< Structure >( ty ) );
-        string t = "struct_" + string( ( (Structure*)ty )->getName() );
+        std::string t = "struct_" + std::string( ( (Structure*)ty )->getName() );
         return libstdhl::Allocator::string( t );
     }
     else if( type->getIDKind() == Type::INTERCONNECT )
@@ -633,7 +633,7 @@ void CselIRToVHDLPass::visit_prolog( Function& value )
 }
 void CselIRToVHDLPass::visit_interlog( Function& value )
 {
-    string tmp( "\n;" );
+    std::string tmp( "\n;" );
 
     if( value.getInParameters().size() == 0
         and value.getOutParameters().size() == 0 )
