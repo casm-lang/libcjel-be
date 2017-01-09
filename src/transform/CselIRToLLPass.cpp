@@ -23,6 +23,8 @@
 
 #include "CselIRToLLPass.h"
 
+#include "../csel-ir/src/analyze/CselIRDumpPass.h"
+
 using namespace libcsel_ir;
 using namespace libcsel_be;
 

@@ -21,16 +21,17 @@
 //  along with libcsel-be. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef _LIB_CSELBE_ALL_H_
-#define _LIB_CSELBE_ALL_H_
+#ifndef _LIB_CSELBE_CSELBE_H_
+#define _LIB_CSELBE_CSELBE_H_
 
-#include "libcsel-be.h"
+namespace libcsel_be
+{
+    class CselBE
+    {
+    };
+}
 
-#include "src/transform/CselIRToC11Pass.h"
-#include "src/transform/CselIRToLLPass.h"
-#include "src/transform/CselIRToVHDLPass.h"
-
-#endif /* _LIB_CSELBE_ALL_H_ */
+#endif /* _LIB_CSELBE_CSELBE_H_ */
 
 //
 //  Local variables:

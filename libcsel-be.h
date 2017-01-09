@@ -24,13 +24,14 @@
 #ifndef _LIB_CSELBE_H_
 #define _LIB_CSELBE_H_
 
-#include "libcsel-ir.all.h"
+#include "src/CselBE.h"
+
+#include "src/transform/CselIRToC11Pass.h"
+#include "src/transform/CselIRToLLPass.h"
+#include "src/transform/CselIRToVHDLPass.h"
 
 namespace libcsel_be
 {
-    class CselBE
-    {
-    };
 }
 
 #define TODO                                                                   \

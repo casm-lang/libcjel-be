@@ -23,6 +23,8 @@
 
 #include "CselIRToC11Pass.h"
 
+#include "../csel-ir/src/analyze/CselIRDumpPass.h"
+
 using namespace libcsel_ir;
 using namespace libcsel_be;
 
@@ -85,7 +87,8 @@ static const char* getTypeString( Value& value )
     {
         Value* ty = type->getBound();
         assert( Value::isa< Memory >( ty ) );
-        std::string t = std::string( ( (Memory*)ty )->getStructure()->getName() ) + "*";
+        std::string t
+            = std::string( ( (Memory*)ty )->getStructure()->getName() ) + "*";
         return libstdhl::Allocator::string( t );
     }
     else if( type->getIDKind() == Type::INTERCONNECT )

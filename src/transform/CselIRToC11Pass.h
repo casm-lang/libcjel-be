@@ -24,8 +24,9 @@
 #ifndef _LIB_CSELBE_TO_C11_PASS_H_
 #define _LIB_CSELBE_TO_C11_PASS_H_
 
-#include "libcsel-be.all.h"
 #include "libpass.h"
+
+#include "../csel-ir/src/Visitor.h"
 
 namespace libcsel_be
 {

@@ -23,6 +23,8 @@
 
 #include "CselIRToVHDLPass.h"
 
+#include "../csel-ir/src/analyze/CselIRDumpPass.h"
+
 using namespace libcsel_ir;
 using namespace libcsel_be;
 
@@ -73,7 +75,8 @@ static const char* getTypeString( Value& value )
         else if( type->getBitsize() > 1 )
         {
             std::string t = "std_logic_vector( "
-                       + std::to_string( type->getBitsize() - 1 ) + " downto 0 )";
+                            + std::to_string( type->getBitsize() - 1 )
+                            + " downto 0 )";
             return libstdhl::Allocator::string( t );
         }
         else
@@ -85,8 +88,8 @@ static const char* getTypeString( Value& value )
                 Interconnect* ict = (Interconnect*)bind;
 
                 std::string t = "std_logic_vector( "
-                           + std::to_string( ict->getBitsizeMax() - 1 )
-                           + " downto 0 )";
+                                + std::to_string( ict->getBitsizeMax() - 1 )
+                                + " downto 0 )";
                 return libstdhl::Allocator::string( t );
             }
 
@@ -97,7 +100,8 @@ static const char* getTypeString( Value& value )
     {
         Value* ty = type->getBound();
         assert( Value::isa< Structure >( ty ) );
-        std::string t = "struct_" + std::string( ( (Structure*)ty )->getName() );
+        std::string t
+            = "struct_" + std::string( ( (Structure*)ty )->getName() );
         return libstdhl::Allocator::string( t );
     }
     else if( type->getIDKind() == Type::INTERCONNECT )
