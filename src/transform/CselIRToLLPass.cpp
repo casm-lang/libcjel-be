@@ -55,23 +55,26 @@ bool CselIRToLLPass::run( libpass::PassResult& pr )
 
 static const char* getTypeString( Value& value )
 {
-    Type* type = value.getType();
-    assert( type );
+    // Type* type = value.getType();
+    // assert( type );
 
-    if( type->getIDKind() == Type::ID::BIT )
-    {
-        std::string t = "i" + std::to_string( type->getBitsize() );
-        return t.c_str();
-    }
-    else if( type->getIDKind() == Type::ID::STRUCTURE )
-    {
-        assert( Value::isa< Structure >( &value ) );
-        return ( (Structure*)&value )->getIdentifier()->getName();
-    }
-    else
-    {
-        assert( !"unimplemented or unsupported type to convert!" );
-    }
+    // if( type->getIDKind() == Type::ID::BIT )
+    // {
+    //     std::string t = "i" + std::to_string( type->getBitsize() );
+    //     return t.c_str();
+    // }
+    // else if( type->getIDKind() == Type::ID::STRUCTURE )
+    // {
+    //     assert( isa< Structure >( &value ) );
+    //     return ( (Structure*)&value )->getIdentifier()->getName();
+    // }
+    // else
+    // {
+    //     assert( !"unimplemented or unsupported type to convert!" );
+    // }
+
+    assert( !" PPA: TODO!!! " );
+    return 0;
 }
 
 void CselIRToLLPass::visit_prolog( Module& value )

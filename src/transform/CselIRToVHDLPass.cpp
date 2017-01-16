@@ -62,87 +62,90 @@ bool CselIRToVHDLPass::run( libpass::PassResult& pr )
 
 static const char* getTypeString( Value& value )
 {
-    Type* type = value.getType();
-    assert( type );
+    // Type* type = value.getType();
+    // assert( type );
 
-    if( type->getIDKind() == Type::BIT
-        or Value::isa< ExtractInstruction >( &value ) )
-    {
-        if( type->getBitsize() == 1 )
-        {
-            return "std_logic";
-        }
-        else if( type->getBitsize() > 1 )
-        {
-            std::string t = "std_logic_vector( "
-                            + std::to_string( type->getBitsize() - 1 )
-                            + " downto 0 )";
-            return libstdhl::Allocator::string( t );
-        }
-        else
-        {
-            if( type->getIDKind() == Type::INTERCONNECT )
-            {
-                Value* bind = type->getBound();
-                assert( Value::isa< Interconnect >( bind ) );
-                Interconnect* ict = (Interconnect*)bind;
+    // if( type->getID() == Type::BIT
+    //     or isa< ExtractInstruction >( &value ) )
+    // {
+    //     if( type->getSize() == 1 )
+    //     {
+    //         return "std_logic";
+    //     }
+    //     else if( type->getSize() > 1 )
+    //     {
+    //         std::string t = "std_logic_vector( "
+    //                         + std::to_string( type->getSize() - 1 )
+    //                         + " downto 0 )";
+    //         return libstdhl::Allocator::string( t );
+    //     }
+    //     else
+    //     {
+    //         if( type->getID() == Type::INTERCONNECT )
+    //         {
+    //             Value* bind = type->getBound();
+    //             assert( isa< Interconnect >( bind ) );
+    //             Interconnect* ict = (Interconnect*)bind;
 
-                std::string t = "std_logic_vector( "
-                                + std::to_string( ict->getBitsizeMax() - 1 )
-                                + " downto 0 )";
-                return libstdhl::Allocator::string( t );
-            }
+    //             std::string t = "std_logic_vector( "
+    //                             + std::to_string( ict->getSizeMax() - 1 )
+    //                             + " downto 0 )";
+    //             return libstdhl::Allocator::string( t );
+    //         }
 
-            assert( !"invalid type bit size" );
-        }
-    }
-    else if( type->getIDKind() == Type::ID::STRUCTURE )
-    {
-        Value* ty = type->getBound();
-        assert( Value::isa< Structure >( ty ) );
-        std::string t
-            = "struct_" + std::string( ( (Structure*)ty )->getName() );
-        return libstdhl::Allocator::string( t );
-    }
-    else if( type->getIDKind() == Type::INTERCONNECT )
-    {
-        assert( 0 );
-        // return libstdhl::Allocator::string( "Interconnect" );
-    }
-    else if( type->getIDKind() == Type::MEMORY )
-    {
-        assert( 0 );
-        // return libstdhl::Allocator::string( "Interconnect" );
-    }
-    else
-    {
-        assert( !"unimplemented or unsupported type to convert!" );
-    }
+    //         assert( !"invalid type bit size" );
+    //     }
+    // }
+    // else if( type->getID() == Type::ID::STRUCTURE )
+    // {
+    //     Value* ty = type->getBound();
+    //     assert( isa< Structure >( ty ) );
+    //     std::string t
+    //         = "struct_" + std::string( ( (Structure*)ty )->getName() );
+    //     return libstdhl::Allocator::string( t );
+    // }
+    // else if( type->getID() == Type::INTERCONNECT )
+    // {
+    //     assert( 0 );
+    //     // return libstdhl::Allocator::string( "Interconnect" );
+    // }
+    // else if( type->getID() == Type::MEMORY )
+    // {
+    //     assert( 0 );
+    //     // return libstdhl::Allocator::string( "Interconnect" );
+    // }
+    // else
+    // {
+    //     assert( !"unimplemented or unsupported type to convert!" );
+    // }
+    
+    assert( !" PPA: TODO!!! " );
+    return 0;
 }
 
 static void emit_statement_wires( Statement& value )
 {
     for( Value* instr : value.getInstructions() )
     {
-        if( Value::isa< AllocInstruction >( instr ) )
+        if( isa< AllocInstruction >( instr ) )
         {
             fprintf( stream, "  signal     %s : %s; -- %s\n", instr->getLabel(),
                 getTypeString( *instr ), instr->getName() );
         }
-        else if( Value::isa< IdInstruction >( instr ) )
+        else if( isa< IdInstruction >( instr ) )
         {
             IdInstruction* id_instr = (IdInstruction*)instr;
             Value* id_kind = id_instr->get();
             const char* id = 0;
 
-            if( Value::isa< CallableUnit >( id_kind ) )
+            if( isa< CallableUnit >( id_kind ) )
             {
                 std::bitset< 48 > v( ( (CallableUnit*)id_kind )
                                          ->getAllocationID()
                                          ->getValue()[ 0 ] );
                 id = v.to_string().c_str();
             }
-            else if( Value::isa< Variable >( id_instr->get() ) )
+            else if( isa< Variable >( id_instr->get() ) )
             {
                 std::bitset< 48 >
                 v( ( (Variable*)id_kind )->getAllocationID()->getValue()[ 0 ] );
@@ -157,10 +160,10 @@ static void emit_statement_wires( Statement& value )
                 instr->getLabel(), getTypeString( *instr ), id,
                 instr->getName() );
         }
-        else if( Value::isa< IdCallInstruction >( instr ) )
+        else if( isa< IdCallInstruction >( instr ) )
         {
             IdCallInstruction* idcall = (IdCallInstruction*)instr;
-            assert( Value::isa< CallableUnit >( idcall->getValue( 0 ) ) );
+            assert( isa< CallableUnit >( idcall->getValue( 0 ) ) );
             CallableUnit* cs = (CallableUnit*)idcall->getValue( 0 );
 
             fprintf( stream, "  signal sig_%s : std_logic := '0'; -- %s\n",
@@ -170,7 +173,7 @@ static void emit_statement_wires( Statement& value )
 
             for( Value* v : m->get< Function >() )
             {
-                assert( v and Value::isa< CallableUnit >( v ) );
+                assert( v and isa< CallableUnit >( v ) );
                 CallableUnit* cu = (CallableUnit*)v;
 
                 // TODO: FIXME: PPA: HACK: more checks here regarding the
@@ -198,10 +201,10 @@ static void emit_statement_wires( Statement& value )
             fprintf( stream, "  signal sig_%s : std_logic := '0'; -- %s\n",
                 instr->getLabel(), instr->getName() );
 
-            if( not Value::isa< NopInstruction >( instr )
-                and not Value::isa< CallInstruction >( instr )
-                and not Value::isa< IdCallInstruction >( instr )
-                and not Value::isa< StoreInstruction >( instr ) )
+            if( not isa< NopInstruction >( instr )
+                and not isa< CallInstruction >( instr )
+                and not isa< IdCallInstruction >( instr )
+                and not isa< StoreInstruction >( instr ) )
             {
                 fprintf( stream, "  signal     %s : %s; -- %s\n",
                     instr->getLabel(), getTypeString( *instr ),
@@ -218,7 +221,7 @@ static void emit_wire_req_ack( Value* context )
         "  signal ack_%s : std_logic := '0';\n",
         context->getLabel(), context->getName(), context->getLabel() );
 
-    if( Value::isa< Statement >( context ) )
+    if( isa< Statement >( context ) )
     {
         fprintf( stream, "  signal sig_%s : std_logic := '0';\n",
             context->getLabel() );
@@ -226,21 +229,21 @@ static void emit_wire_req_ack( Value* context )
         emit_statement_wires( *( (Statement*)context ) );
     }
 
-    if( Value::isa< Scope >( context ) )
+    if( isa< Scope >( context ) )
     {
         for( auto block : ( (Scope*)context )->getBlocks() )
         {
             emit_wire_req_ack( block );
         }
     }
-    else if( Value::isa< BranchStatement >( context ) )
+    else if( isa< BranchStatement >( context ) )
     {
         for( auto inner_block : ( (BranchStatement*)context )->getScopes() )
         {
             emit_wire_req_ack( inner_block );
         }
     }
-    else if( Value::isa< LoopStatement >( context ) )
+    else if( isa< LoopStatement >( context ) )
     {
         for( auto inner_block : ( (LoopStatement*)context )->getScopes() )
         {
@@ -251,14 +254,14 @@ static void emit_wire_req_ack( Value* context )
 
 static void emit_wire( Value& value )
 {
-    assert( Value::isa< CallableUnit >( &value ) );
+    assert( isa< CallableUnit >( &value ) );
     CallableUnit* cunit = ( (CallableUnit*)( &value ) );
 
     for( auto link : cunit->getLinkage() )
     {
         Reference* linkage = (Reference*)link;
 
-        if( linkage->getType()->getIDKind() == Type::INTERCONNECT )
+        if( linkage->getType()->getID() == Type::INTERCONNECT )
         {
             fprintf( stream,
                 "signal ict_req_%s  : std_logic := '0'; -- interconnect '%s'\n"
@@ -269,30 +272,34 @@ static void emit_wire( Value& value )
                 "others => '0' );\n",
                 linkage->getLabel(), linkage->getLabel(), linkage->getLabel(),
                 linkage->getLabel(), linkage->getLabel()
-                //, mem->getStructure()->getType()->getBitsize() - 1
+                //, mem->getStructure()->getType()->getSize() - 1
                 );
 
             continue;
         }
-        else if( linkage->getType()->getIDKind() == Type::MEMORY )
+        // else if( linkage->getType()->getID() == Type::MEMORY )
+        // {
+        //     Value* bind = linkage->getType()->getBound();
+        //     assert( isa< Memory >( bind ) );
+        //     Memory* mem = (Memory*)bind;
+
+        //     fprintf( stream,
+        //         "signal mem_req_%s  : std_logic := '0'; -- memory '%s'\n"
+        //         "signal mem_ack_%s  : std_logic := '0';\n"
+        //         "signal mem_mode_%s : std_logic := '0';\n"
+        //         "signal mem_addr_%s : std_logic_vector( 47 downto 0 ) := ( "
+        //         "others => '0' );\n"
+        //         "signal mem_data_%s : std_logic_vector( %u downto 0 ) := ( "
+        //         "others => '0' );\n",
+        //         linkage->getLabel(), linkage->getLabel(), linkage->getLabel(),
+        //         linkage->getLabel(), linkage->getLabel(), linkage->getLabel(),
+        //         mem->getStructure()->getType()->getSize() - 1 );
+
+        //     continue;
+        // }
+        else
         {
-            Value* bind = linkage->getType()->getBound();
-            assert( Value::isa< Memory >( bind ) );
-            Memory* mem = (Memory*)bind;
-
-            fprintf( stream,
-                "signal mem_req_%s  : std_logic := '0'; -- memory '%s'\n"
-                "signal mem_ack_%s  : std_logic := '0';\n"
-                "signal mem_mode_%s : std_logic := '0';\n"
-                "signal mem_addr_%s : std_logic_vector( 47 downto 0 ) := ( "
-                "others => '0' );\n"
-                "signal mem_data_%s : std_logic_vector( %u downto 0 ) := ( "
-                "others => '0' );\n",
-                linkage->getLabel(), linkage->getLabel(), linkage->getLabel(),
-                linkage->getLabel(), linkage->getLabel(), linkage->getLabel(),
-                mem->getStructure()->getType()->getBitsize() - 1 );
-
-            continue;
+            assert( !" PPA: TODO!!! " );
         }
 
         fprintf( stream,
@@ -306,7 +313,7 @@ static void emit_wire( Value& value )
     Block* context = cunit->getContext();
     assert( context );
 
-    if( Value::isa< Scope >( context ) )
+    if( isa< Scope >( context ) )
     {
         emit_wire_req_ack( context );
     }
@@ -594,9 +601,9 @@ void CselIRToVHDLPass::visit_prolog( Module& value )
 
     for( Value* v : ( *Value::getSymbols() )[ ".instruction" ] )
     {
-        if( Value::isa< IdInstruction >( v )
-            or Value::isa< CallInstruction >( v )
-            or Value::isa< IdCallInstruction >( v ) )
+        if( isa< IdInstruction >( v )
+            or isa< CallInstruction >( v )
+            or isa< IdCallInstruction >( v ) )
         {
             continue;
         }
@@ -660,42 +667,48 @@ void CselIRToVHDLPass::visit_interlog( Function& value )
     {
         Reference* linkage = (Reference*)link;
 
-        if( linkage->getType()->getIDKind() == Type::INTERCONNECT )
+        if( linkage->getType()->getID() == Type::INTERCONNECT )
         {
-            Value* bind = linkage->getType()->getBound();
-            assert( Value::isa< Interconnect >( bind ) );
-            Interconnect* ict = (Interconnect*)bind;
+            assert( !" PPA: TODO!!! " );
+            
+            // Value* bind = linkage->getType()->getBound();
+            // assert( isa< Interconnect >( bind ) );
+            // Interconnect* ict = (Interconnect*)bind;
 
-            fprintf( stream,
-                "  ict_%s: entity work.%s port map( ict_req_%s, ict_ack_%s, "
-                "ict_addr_%s, ict_data_%s",
-                linkage->getLabel(), ict->getLabel(), linkage->getLabel(),
-                linkage->getLabel(), linkage->getLabel(), linkage->getLabel() );
+            // fprintf( stream,
+            //     "  ict_%s: entity work.%s port map( ict_req_%s, ict_ack_%s, "
+            //     "ict_addr_%s, ict_data_%s",
+            //     linkage->getLabel(), ict->getLabel(), linkage->getLabel(),
+            //     linkage->getLabel(), linkage->getLabel(), linkage->getLabel() );
 
-            for( auto w : value.getLinkage() )
-            {
-                if( w->getType()->getIDKind() == Type::MEMORY
-                    or w->getType()->getIDKind() == Type::INTERCONNECT )
-                {
-                    continue;
-                }
-                fprintf( stream, ", %s", w->getLabel() );
-            }
+            // for( auto w : value.getLinkage() )
+            // {
+            //     if( w->getType()->getID() == Type::MEMORY
+            //         or w->getType()->getID() == Type::INTERCONNECT )
+            //     {
+            //         continue;
+            //     }
+            //     fprintf( stream, ", %s", w->getLabel() );
+            // }
 
-            fprintf( stream, " );\n" );
+            // fprintf( stream, " );\n" );
         }
-        else if( linkage->getType()->getIDKind() == Type::MEMORY )
-        {
-            Value* bind = linkage->getType()->getBound();
-            assert( Value::isa< Memory >( bind ) );
-            Memory* mem = (Memory*)bind;
+        // else if( linkage->getType()->getID() == Type::MEMORY )
+        // {
+        //     Value* bind = linkage->getType()->getBound();
+        //     assert( isa< Memory >( bind ) );
+        //     Memory* mem = (Memory*)bind;
 
-            fprintf( stream,
-                "  mem_%s: entity work.memory generic map ( 48, 114 ) port "
-                "map( mem_req_%s, mem_ack_%s, mem_mode_%s, mem_addr_%s, "
-                "mem_data_%s );\n",
-                linkage->getLabel(), linkage->getLabel(), linkage->getLabel(),
-                linkage->getLabel(), linkage->getLabel(), linkage->getLabel() );
+        //     fprintf( stream,
+        //         "  mem_%s: entity work.memory generic map ( 48, 114 ) port "
+        //         "map( mem_req_%s, mem_ack_%s, mem_mode_%s, mem_addr_%s, "
+        //         "mem_data_%s );\n",
+        //         linkage->getLabel(), linkage->getLabel(), linkage->getLabel(),
+        //         linkage->getLabel(), linkage->getLabel(), linkage->getLabel() );
+        // }
+        else
+        {
+            assert( !" PPA: TODO!!! " );
         }
     }
 
@@ -763,7 +776,7 @@ void CselIRToVHDLPass::visit_prolog( Reference& value )
         assert( 0 );
     }
 
-    if( value.getType() and value.getType()->getIDKind() == Type::INTERCONNECT )
+    if( value.getType() and value.getType()->getID() == Type::INTERCONNECT )
     {
         fprintf( stream,
             "ict_req_%s  : out std_logic -- interconnect '%s'\n; "
@@ -775,24 +788,24 @@ void CselIRToVHDLPass::visit_prolog( Reference& value )
             ( value.getCallableUnit()->isLastParameter( &value ) ? ""
                                                                  : "\n; " ) );
     }
-    else if( value.getType() and value.getType()->getIDKind() == Type::MEMORY )
-    {
-        Value* bind = value.getType()->getBound();
-        assert( Value::isa< Memory >( bind ) );
-        Memory* mem = (Memory*)bind;
+    // else if( value.getType() and value.getType()->getID() == Type::MEMORY )
+    // {
+    //     Value* bind = value.getType()->getBound();
+    //     assert( isa< Memory >( bind ) );
+    //     Memory* mem = (Memory*)bind;
 
-        fprintf( stream,
-            "mem_req_%s  : out std_logic -- memory '%s'\n; "
-            "mem_ack_%s  : in  std_logic\n; "
-            "mem_mode_%s : out std_logic\n; "
-            "mem_addr_%s : out std_logic_vector( 47 downto 0 )\n; "
-            "mem_data_%s : inout std_logic_vector( %u downto 0 )%s",
-            value.getLabel(), value.getLabel(), value.getLabel(),
-            value.getLabel(), value.getLabel(), value.getLabel(),
-            mem->getStructure()->getType()->getBitsize() - 1,
-            ( value.getCallableUnit()->isLastParameter( &value ) ? ""
-                                                                 : "\n; " ) );
-    }
+    //     fprintf( stream,
+    //         "mem_req_%s  : out std_logic -- memory '%s'\n; "
+    //         "mem_ack_%s  : in  std_logic\n; "
+    //         "mem_mode_%s : out std_logic\n; "
+    //         "mem_addr_%s : out std_logic_vector( 47 downto 0 )\n; "
+    //         "mem_data_%s : inout std_logic_vector( %u downto 0 )%s",
+    //         value.getLabel(), value.getLabel(), value.getLabel(),
+    //         value.getLabel(), value.getLabel(), value.getLabel(),
+    //         mem->getStructure()->getType()->getSize() - 1,
+    //         ( value.getCallableUnit()->isLastParameter( &value ) ? ""
+    //                                                              : "\n; " ) );
+    // }
     else
     {
         fprintf( stream, "%s : %s %s -- %s %s%s", value.getLabel(), kind,
@@ -800,6 +813,8 @@ void CselIRToVHDLPass::visit_prolog( Reference& value )
             ( value.getCallableUnit()->isLastParameter( &value ) ? ""
                                                                  : "\n; " ) );
     }
+    assert( !" PPA: TODO!!! " );
+
 }
 void CselIRToVHDLPass::visit_epilog( Reference& value )
 {
@@ -853,7 +868,7 @@ void CselIRToVHDLPass::visit_epilog( Structure& value )
 
 void CselIRToVHDLPass::visit_prolog( Variable& value )
 {
-    static Value n( "", &TypeId, libcsel_ir::Value::VALUE );
+    static Value n( "", Type::getTypeID(), libcsel_ir::Value::VALUE );
 
     Module* m = value.getRef< Module >();
 
@@ -941,7 +956,7 @@ void CselIRToVHDLPass::visit_prolog( Memory& value )
         "'Z' );\n"
         "end \\@%s@\\;\n"
         "\n",
-        name, name, name, name, name, value.getSize(), name );
+        name, name, name, name, name, value.getLength(), name );
 }
 void CselIRToVHDLPass::visit_epilog( Memory& value )
 {
@@ -1043,8 +1058,8 @@ void CselIRToVHDLPass::visit_prolog( TrivialStatement& value )
         value.getLabel() );
 
     Value* first = value.getInstructions().front();
-    while( Value::isa< AllocInstruction >( first )
-           or Value::isa< IdInstruction >( first ) )
+    while( isa< AllocInstruction >( first )
+           or isa< IdInstruction >( first ) )
     {
         first = first->getNext();
     }
@@ -1074,8 +1089,8 @@ void CselIRToVHDLPass::visit_prolog( BranchStatement& value )
     // emit_statement_wires( value );
 
     Value* first = value.getInstructions().front();
-    while( Value::isa< AllocInstruction >( first )
-           or Value::isa< IdInstruction >( first ) )
+    while( isa< AllocInstruction >( first )
+           or isa< IdInstruction >( first ) )
     {
         first = first->getNext();
     }
@@ -1132,8 +1147,8 @@ void CselIRToVHDLPass::visit_prolog( LoopStatement& value )
     // emit_statement_wires( value );
 
     Value* first = value.getInstructions().front();
-    while( Value::isa< AllocInstruction >( first )
-           or Value::isa< IdInstruction >( first ) )
+    while( isa< AllocInstruction >( first )
+           or isa< IdInstruction >( first ) )
     {
         first = first->getNext();
     }
@@ -1173,8 +1188,8 @@ void CselIRToVHDLPass::visit_prolog( CallInstruction& value )
             break;
         }
 
-        if( not Value::isa< AllocInstruction >( next )
-            and not Value::isa< IdInstruction >( next ) )
+        if( not isa< AllocInstruction >( next )
+            and not isa< IdInstruction >( next ) )
         {
             break;
         }
@@ -1194,8 +1209,8 @@ void CselIRToVHDLPass::visit_prolog( CallInstruction& value )
             continue;
         }
 
-        if( Value::isa< Reference >( v )
-            and v->getType()->getIDKind() == Type::MEMORY )
+        if( isa< Reference >( v )
+            and v->getType()->getID() == Type::VECTOR )
         {
             fprintf( stream,
                 ", mem_req_%s"
@@ -1206,8 +1221,8 @@ void CselIRToVHDLPass::visit_prolog( CallInstruction& value )
                 v->getLabel(), v->getLabel(), v->getLabel(), v->getLabel(),
                 v->getLabel() );
         }
-        else if( Value::isa< Reference >( v )
-                 and v->getType()->getIDKind() == Type::INTERCONNECT )
+        else if( isa< Reference >( v )
+                 and v->getType()->getID() == Type::INTERCONNECT )
         {
             fprintf( stream,
                 ", ict_req_%s"
@@ -1255,7 +1270,7 @@ void CselIRToVHDLPass::visit_prolog( IdCallInstruction& value )
     // TODO: FIXME: HACK: PPA: IDEA: create implementation directly in 'CselIR'
     // !!!
 
-    assert( Value::isa< CallableUnit >( value.getValue( 0 ) ) );
+    assert( isa< CallableUnit >( value.getValue( 0 ) ) );
     CallableUnit* cs = (CallableUnit*)value.getValue( 0 );
 
     Module* m = value.getRef< Module >();
@@ -1263,7 +1278,7 @@ void CselIRToVHDLPass::visit_prolog( IdCallInstruction& value )
     std::vector< CallableUnit* > selection;
     for( Value* v : m->get< Function >() )
     {
-        assert( v and Value::isa< CallableUnit >( v ) );
+        assert( v and isa< CallableUnit >( v ) );
         CallableUnit* cu = (CallableUnit*)v;
         selection.push_back( cu );
 
@@ -1307,8 +1322,8 @@ void CselIRToVHDLPass::visit_prolog( IdCallInstruction& value )
             continue;
         }
 
-        if( Value::isa< Reference >( v )
-            and v->getType()->getIDKind() == Type::MEMORY )
+        if( isa< Reference >( v )
+            and v->getType()->getID() == Type::VECTOR )
         {
             args += ", mem_req_" + std::string( v->getLabel() );
             args += ", mem_ack_" + std::string( v->getLabel() );
@@ -1316,8 +1331,8 @@ void CselIRToVHDLPass::visit_prolog( IdCallInstruction& value )
             args += ", mem_addr_" + std::string( v->getLabel() );
             args += ", mem_data_" + std::string( v->getLabel() );
         }
-        else if( Value::isa< Reference >( v )
-                 and v->getType()->getIDKind() == Type::INTERCONNECT )
+        else if( isa< Reference >( v )
+                 and v->getType()->getID() == Type::INTERCONNECT )
         {
             args += ", ict_req_" + std::string( v->getLabel() );
             args += ", ict_ack_" + std::string( v->getLabel() );
@@ -1332,7 +1347,7 @@ void CselIRToVHDLPass::visit_prolog( IdCallInstruction& value )
 
     for( Value* v : m->get< Function >() )
     {
-        assert( v and Value::isa< CallableUnit >( v ) );
+        assert( v and isa< CallableUnit >( v ) );
         CallableUnit* cu = (CallableUnit*)v;
 
         // TODO: FIXME: PPA: HACK: more checks here regarding the indirect ID
@@ -1412,8 +1427,8 @@ static void instr_generic_port( Instruction& value,
 
     for( u32 c = 0; c < args.size(); c++ )
     {
-        fprintf( stream, "%s %i%s", ( c == 0 ? " generic map(" : "," ),
-            args[ c ]->getType()->getBitsize(),
+        fprintf( stream, "%s %lu%s", ( c == 0 ? " generic map(" : "," ),
+            args[ c ]->getType()->getSize(),
             ( c == ( args.size() - 1 ) ? " )" : "" ) );
     }
 
@@ -1425,13 +1440,13 @@ static void instr_generic_port( Instruction& value,
     for( Value* v : value.getValues() )
     {
         c++;
-        if( Value::isa< CastInstruction >( &value ) and c == 1 )
+        if( isa< CastInstruction >( &value ) and c == 1 )
         {
             continue;
         }
 
-        if( Value::isa< Reference >( v )
-            and v->getType()->getIDKind() == Type::MEMORY )
+        if( isa< Reference >( v )
+            and v->getType()->getID() == Type::VECTOR )
         {
             fprintf( stream,
                 ", mem_req_%s"
@@ -1442,8 +1457,8 @@ static void instr_generic_port( Instruction& value,
                 v->getLabel(), v->getLabel(), v->getLabel(), v->getLabel(),
                 v->getLabel() );
         }
-        else if( Value::isa< Reference >( v )
-                 and v->getType()->getIDKind() == Type::INTERCONNECT )
+        else if( isa< Reference >( v )
+                 and v->getType()->getID() == Type::INTERCONNECT )
         {
             fprintf( stream,
                 ", ict_req_%s"
@@ -1468,9 +1483,9 @@ static void instr_generic_port( Instruction& value,
             const char* pre = "";
             const char* post = "";
 
-            if( v->getType()->getBitsize() == 1 )
+            if( v->getType()->getSize() == 1 )
             {
-                if( Value::isa< StoreInstruction >( &value ) and c == 2 )
+                if( isa< StoreInstruction >( &value ) and c == 2 )
                 {
                     pre = "to_slb( dst ) => ";
                 }
@@ -1493,19 +1508,19 @@ static void instr_generic_port( Instruction& value,
 
     const char* pre = "";
 
-    if( value.getType()->getBitsize() == 1 )
+    if( value.getType()->getSize() == 1 )
     {
-        if( Value::isa< LoadInstruction >( &value )
-            or Value::isa< AndInstruction >( &value )
-            or Value::isa< XorInstruction >( &value )
-            or Value::isa< OrInstruction >( &value )
-            or Value::isa< NotInstruction >( &value ) )
+        if( isa< LoadInstruction >( &value )
+            or isa< AndInstruction >( &value )
+            or isa< XorInstruction >( &value )
+            or isa< OrInstruction >( &value )
+            or isa< NotInstruction >( &value ) )
         {
             pre = "to_slb( t ) => ";
         }
-        else if( not Value::isa< LoadInstruction >( &value )
-                 and not Value::isa< EquUnsignedInstruction >( &value )
-                 and not Value::isa< NeqUnsignedInstruction >( &value ) )
+        else if( not isa< LoadInstruction >( &value )
+                 and not isa< EquUnsignedInstruction >( &value )
+                 and not isa< NeqUnsignedInstruction >( &value ) )
         {
             assert( 0 );
         }
@@ -1534,9 +1549,9 @@ void CselIRToVHDLPass::visit_prolog( CastInstruction& value )
     Value* kind = value.getLHS();
     Value* src = value.getRHS();
 
-    if( Value::isa< ExtractInstruction >( src )
-        and Value::isa< Structure >( kind )
-        // and src->getType()->getIDKind() == Type::STRUCTURE
+    if( isa< ExtractInstruction >( src )
+        and isa< Structure >( kind )
+        // and src->getType()->getID() == Type::STRUCTURE
         )
     {
         const char* type_name = getTypeString( value );
@@ -1580,24 +1595,24 @@ void CselIRToVHDLPass::visit_prolog( CastInstruction& value )
             getTypeString( value ), name, type_name, name, type_name, name,
             type_name );
 
-        assert( Value::isa< Structure >( kind ) );
+        assert( isa< Structure >( kind ) );
         Structure* sty = (Structure*)kind;
-        i16 bs = sty->getType()->getBitsize() - 1;
+        u64 bs = sty->getType()->getSize() - 1;
 
         for( Value* v : sty->getElements() )
         {
-            if( v->getType()->getBitsize() > 1 )
+            if( v->getType()->getSize() > 1 )
             {
-                fprintf( stream, "      dst.%s <= src( %u downto %u );\n",
-                    v->getName(), bs, bs - v->getType()->getBitsize() + 1 );
+                fprintf( stream, "      dst.%s <= src( %lu downto %lu );\n",
+                    v->getName(), bs, bs - v->getType()->getSize() + 1 );
             }
             else
             {
                 fprintf(
-                    stream, "      dst.%s <= src( %u );\n", v->getName(), bs );
+                    stream, "      dst.%s <= src( %lu );\n", v->getName(), bs );
             }
 
-            bs = bs - v->getType()->getBitsize();
+            bs = bs - v->getType()->getSize();
         }
 
         fprintf( stream,
@@ -1646,18 +1661,21 @@ void CselIRToVHDLPass::visit_prolog( ExtractInstruction& value )
     Value* base = value.getLHS();
     Value* offset = value.getRHS();
 
-    if( Value::isa< Reference >( base ) and Value::isa< Instruction >( offset )
-        and base->getType()->getIDKind() == Type::MEMORY
-        and offset->getType()->getIDKind() == Type::BIT )
+    if( isa< Reference >( base ) and isa< Instruction >( offset )
+        and base->getType()->getID() == Type::VECTOR
+        and offset->getType()->getID() == Type::BIT )
     {
         if( not instruction_implementation )
         {
-            Value* bind = base->getType()->getBound();
-            assert( Value::isa< Memory >( bind ) );
-            Memory* mem = (Memory*)bind;
+            // Value* bind = base->getType()->getBound();
+            // assert( isa< Memory >( bind ) );
+            // Memory* mem = (Memory*)bind;
 
-            instr_generic_port(
-                value, { offset, mem->getStructure() }, "memory" );
+            // instr_generic_port(
+            //     value, { offset, mem->getStructure() }, "memory" );
+
+            assert( !" PPA: TODO!!! " );
+
 
             return;
         }
@@ -1714,22 +1732,25 @@ void CselIRToVHDLPass::visit_prolog( ExtractInstruction& value )
             "\n",
             name, name, name, name, name, name );
     }
-    else if( Value::isa< Reference >( base )
-             and base->getType()->getIDKind() == Type::INTERCONNECT
-             and offset->getType()->getIDKind() == Type::BIT )
+    else if( isa< Reference >( base )
+             and base->getType()->getID() == Type::INTERCONNECT
+             and offset->getType()->getID() == Type::BIT )
     {
         if( not instruction_implementation )
         {
-            Value* bind = base->getType()->getBound();
-            assert( Value::isa< Interconnect >( bind ) );
-            Interconnect* ict = (Interconnect*)bind;
+            // Value* bind = base->getType()->getBound();
+            // assert( isa< Interconnect >( bind ) );
+            // Interconnect* ict = (Interconnect*)bind;
 
-            static Value addr( "", &TypeId, libcsel_ir::Value::VALUE );
-            static Value data( "", new Type( Type::BIT, ict->getBitsizeMax(),
-                                       Type::STATE::LOCKED ),
-                libcsel_ir::Value::VALUE );
+            // static Value addr( "", &TypeId, libcsel_ir::Value::VALUE );
+            // static Value data( "", new Type( Type::BIT, ict->getSizeMax(),
+            //                            Type::STATE::LOCKED ),
+            //     libcsel_ir::Value::VALUE );
 
-            instr_generic_port( value, { &addr, &data }, "interconnect" );
+            // instr_generic_port( value, { &addr, &data }, "interconnect" );
+
+            assert( !" PPA: TODO!!! " );
+            
             return;
         }
 
@@ -1784,10 +1805,10 @@ void CselIRToVHDLPass::visit_prolog( ExtractInstruction& value )
             name, name, name, name, name, name );
     }
     // else if
-    // ( ( Value::isa< CastInstruction >( base ) or Value::isa< Reference >(
+    // ( ( isa< CastInstruction >( base ) or isa< Reference >(
     // base ) )
-    // and Value::isa< Structure >( offset )
-    // and base->getType()->getIDKind() == Type::STRUCTURE
+    // and isa< Structure >( offset )
+    // and base->getType()->getID() == Type::STRUCTURE
     // )
     // {
     // 	if( not instruction_implementation )
@@ -1802,10 +1823,10 @@ void CselIRToVHDLPass::visit_prolog( ExtractInstruction& value )
     // 	    );
     // 	}
     // }
-    else if( ( Value::isa< Instruction >( base )
-                 or Value::isa< Reference >( base ) )
-             and Value::isa< Structure >( offset )
-             and base->getType()->getIDKind() == Type::STRUCTURE )
+    else if( ( isa< Instruction >( base )
+                 or isa< Reference >( base ) )
+             and isa< Structure >( offset )
+             and base->getType()->getID() == Type::STRUCTURE )
     {
         if( not instruction_implementation )
         {
@@ -1840,7 +1861,7 @@ void CselIRToVHDLPass::visit_prolog( LoadInstruction& value )
     {
         Value* src = value.get();
 
-        if( Value::isa< CastInstruction >( src ) )
+        if( isa< CastInstruction >( src ) )
         {
             fprintf( stream,
                 " -- load_%s: -- %s '%s'\n"
@@ -1852,7 +1873,7 @@ void CselIRToVHDLPass::visit_prolog( LoadInstruction& value )
 
             // instr_generic_port( value, { &value } );
         }
-        else if( Value::isa< ExtractInstruction >( src ) )
+        else if( isa< ExtractInstruction >( src ) )
         {
             ExtractInstruction* ext_src = (ExtractInstruction*)src;
             Value* base_src = ext_src->getLHS();
@@ -1933,31 +1954,31 @@ void CselIRToVHDLPass::visit_prolog( StoreInstruction& value )
     Value* src = value.getLHS();
     Value* dst = value.getRHS();
 
-    store_bitsize = src->getType()->getBitsize();
+    store_bitsize = src->getType()->getSize();
 
     if( not instruction_implementation )
     {
-        if( Value::isa< Instruction >( src ) and Value::isa< Reference >( dst )
-            and src->getType()->getIDKind() == Type::BIT
-            and dst->getType()->getIDKind() == Type::BIT )
+        if( isa< Instruction >( src ) and isa< Reference >( dst )
+            and src->getType()->getID() == Type::BIT
+            and dst->getType()->getID() == Type::BIT )
         {
             instr_generic_port( value, { src } );
         }
-        else if( Value::isa< ExtractInstruction >( dst ) )
+        else if( isa< ExtractInstruction >( dst ) )
         {
             ExtractInstruction* ext = (ExtractInstruction*)dst;
             Value* base = ext->getLHS();
             Value* offset = ext->getRHS();
 
-            if( ( Value::isa< CastInstruction >( base )
-                    or Value::isa< Reference >( base ) )
-                and Value::isa< Structure >( offset )
-                and base->getType()->getIDKind() == Type::STRUCTURE )
+            if( ( isa< CastInstruction >( base )
+                    or isa< Reference >( base ) )
+                and isa< Structure >( offset )
+                and base->getType()->getID() == Type::STRUCTURE )
             {
                 std::string tmp_dst = std::string( base->getLabel() ) + "."
                                       + std::string( offset->getName() );
 
-                if( Value::isa< ExtractInstruction >( src ) )
+                if( isa< ExtractInstruction >( src ) )
                 {
                     ExtractInstruction* ext_src = (ExtractInstruction*)src;
                     Value* base_src = ext_src->getLHS();
@@ -2521,8 +2542,8 @@ void CselIRToVHDLPass::visit_prolog( ZeroExtendInstruction& value )
         "\n",
         name, name, name, name, name, name );
 
-    // u16 bs = value.getType()->getBitsize() -
-    // value.get()->getType()->getBitsize();
+    // u16 bs = value.getType()->getSize() -
+    // value.get()->getType()->getSize();
     // std::bitset< 256 > v( 0 );
     // const char* bits = &(v.to_string().c_str()[ 256 - bs ]);
     // const char* fmt = ( bs > 1 ? "\"" : "'" );
@@ -2596,7 +2617,7 @@ void CselIRToVHDLPass::visit_epilog( TruncationInstruction& value )
 
 void CselIRToVHDLPass::visit_prolog( BitConstant& value )
 {
-    if( module->get< Constants >().front() == &value )
+    if( module->get< Constant >().front() == &value )
     {
         fprintf( stream,
             "-- Constants\n"
@@ -2607,28 +2628,30 @@ void CselIRToVHDLPass::visit_prolog( BitConstant& value )
             "package Constants is\n" );
     }
 
-    u16 bs = value.getType()->getBitsize();
-    std::bitset< 256 > v( value.getValue()[ 0 ] );
-    const char* bits = &( v.to_string().c_str()[ 256 - bs ] );
-    const char* fmt = ( bs > 1 ? "\"" : "'" );
+    assert( !" PPA: TODO!!! " );
+    
+    // u16 bs = value.getType()->getSize();
+    // std::bitset< 256 > v( value.getValue()[ 0 ] );
+    // const char* bits = &( v.to_string().c_str()[ 256 - bs ] );
+    // const char* fmt = ( bs > 1 ? "\"" : "'" );
 
-    StructureConstant* sc = 0;
-    if( value.isBound() )
-    {
-        sc = value.getBound();
-        u1 last = sc->getElements().back() == &value;
+    // StructureConstant* sc = 0;
+    // if( value.isBound() )
+    // {
+    //     sc = value.getBound();
+    //     u1 last = sc->getElements().back() == &value;
 
-        fprintf( stream, "%s%s%s%s", fmt, bits, fmt, last ? "" : ", " );
-    }
-    else
-    {
-        fprintf( stream, "  constant %s : %s := %s%s%s;\n", value.getLabel(),
-            getTypeString( value ), fmt, bits, fmt );
-    }
+    //     fprintf( stream, "%s%s%s%s", fmt, bits, fmt, last ? "" : ", " );
+    // }
+    // else
+    // {
+    //     fprintf( stream, "  constant %s : %s := %s%s%s;\n", value.getLabel(),
+    //         getTypeString( value ), fmt, bits, fmt );
+    // }
 }
 void CselIRToVHDLPass::visit_epilog( BitConstant& value )
 {
-    if( module->get< Constants >().back() == &value )
+    if( module->get< Constant >().back() == &value )
     {
         fprintf( stream,
             "end;\n"
@@ -2642,7 +2665,7 @@ void CselIRToVHDLPass::visit_epilog( BitConstant& value )
 
 void CselIRToVHDLPass::visit_prolog( StructureConstant& value )
 {
-    if( module->get< Constants >().front() == &value )
+    if( module->get< Constant >().front() == &value )
     {
         fprintf( stream,
             "-- Constants\n"
@@ -2660,7 +2683,7 @@ void CselIRToVHDLPass::visit_epilog( StructureConstant& value )
 {
     fprintf( stream, ");\n" );
 
-    if( module->get< Constants >().back() == &value )
+    if( module->get< Constant >().back() == &value )
     {
         fprintf( stream,
             "end;\n"
@@ -2686,7 +2709,7 @@ void CselIRToVHDLPass::visit_epilog( StringConstant& value )
 
 void CselIRToVHDLPass::visit_prolog( Interconnect& value )
 {
-    static Value n( "", &TypeId, libcsel_ir::Value::VALUE );
+    static Value n( "", Type::getTypeID(), libcsel_ir::Value::VALUE );
 
     fprintf( stream,
         "-- Interconnect '%s'\n"
@@ -2700,7 +2723,7 @@ void CselIRToVHDLPass::visit_prolog( Interconnect& value )
         "( req  : in  std_logic\n"
         "; ack  : out std_logic\n"
         "; addr : in  %s\n"
-        "; data : out std_logic_vector( %i downto 0 )\n",
+        "; data : out std_logic_vector( %lu downto 0 )\n",
         value.getLabel(), value.getLabel(), getTypeString( n ),
         value.getBitsizeMax() - 1 );
 
@@ -2721,51 +2744,54 @@ void CselIRToVHDLPass::visit_prolog( Interconnect& value )
 
     for( auto v : value.getObjects() )
     {
-        assert( Value::isa< Variable >( v ) );
-        Variable* var = (Variable*)v;
+        assert( isa< Variable >( v ) );
 
-        Value* ty = var->getType()->getBound();
-        assert( Value::isa< Structure >( ty ) );
-        Structure* sty = (Structure*)ty;
+        assert( !" PPA: TODO!!! " );
 
-        std::bitset< 48 > bits( var->getAllocationID()->getValue()[ 0 ] );
+        // Variable* var = (Variable*)v;
+        
+        // Value* ty = var->getType()->getBound();
+        // assert( isa< Structure >( ty ) );
+        // Structure* sty = (Structure*)ty;
 
-        // TODO: FIXME: PPA: HACK: this needs to be generic in the future!!!
-        fprintf( stream,
-            "      when \"%s\" =>\n"
-            "        data <= ",
-            bits.to_string().c_str() );
+        // std::bitset< 48 > bits( var->getAllocationID()->getValue()[ 0 ] );
 
-        u64 padding = 0;
-        for( auto e : sty->getElements() )
-        {
-            padding += e->getType()->getBitsize();
-        }
+        // // TODO: FIXME: PPA: HACK: this needs to be generic in the future!!!
+        // fprintf( stream,
+        //     "      when \"%s\" =>\n"
+        //     "        data <= ",
+        //     bits.to_string().c_str() );
 
-        u1 first = true;
+        // u64 padding = 0;
+        // for( auto e : sty->getElements() )
+        // {
+        //     padding += e->getType()->getSize();
+        // }
 
-        if( padding < 65 )
-        {
-            std::bitset< 256 > bits( 0 );
+        // u1 first = true;
 
-            fprintf( stream, "\"%s\"",
-                &bits.to_string().c_str()[ 256 - ( 65 - padding ) ] );
+        // if( padding < 65 )
+        // {
+        //     std::bitset< 256 > bits( 0 );
 
-            first = false;
-        }
+        //     fprintf( stream, "\"%s\"",
+        //         &bits.to_string().c_str()[ 256 - ( 65 - padding ) ] );
 
-        for( auto e : sty->getElements() )
-        {
-            fprintf( stream, "%s%s.%s", ( first ? "" : " & " ), var->getLabel(),
-                e->getName() );
+        //     first = false;
+        // }
 
-            if( first )
-            {
-                first = false;
-            }
-        }
+        // for( auto e : sty->getElements() )
+        // {
+        //     fprintf( stream, "%s%s.%s", ( first ? "" : " & " ), var->getLabel(),
+        //         e->getName() );
 
-        fprintf( stream, ";\n" );
+        //     if( first )
+        //     {
+        //         first = false;
+        //     }
+        // }
+
+        // fprintf( stream, ";\n" );
     }
 
     fprintf( stream,
