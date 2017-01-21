@@ -77,7 +77,7 @@ static const char* getTypeString( Value& value )
     return 0;
 }
 
-void CselIRToLLPass::visit_prolog( Module& value )
+void CselIRToLLPass::visit_prolog( Module& value, Context& )
 {
     fprintf( stdout,
         "; ModuleID = '%s'\n"
@@ -85,7 +85,7 @@ void CselIRToLLPass::visit_prolog( Module& value )
         "\n",
         value.getName(), value.getName() );
 }
-void CselIRToLLPass::visit_epilog( Module& value )
+void CselIRToLLPass::visit_epilog( Module& value, Context& )
 {
     fprintf( stdout,
         ";; end of module: '%s'\n"
@@ -93,21 +93,21 @@ void CselIRToLLPass::visit_epilog( Module& value )
         value.getName() );
 }
 
-void CselIRToLLPass::visit_prolog( Function& value )
+void CselIRToLLPass::visit_prolog( Function& value, Context& )
 {
     fprintf( stdout,
         "define void @%s ;; Function\n"
         "( ",
         value.getName() );
 }
-void CselIRToLLPass::visit_interlog( Function& value )
+void CselIRToLLPass::visit_interlog( Function& value, Context& )
 {
     fprintf( stdout,
         "\n)\n"
         "{\n"
         "begin:\n" );
 }
-void CselIRToLLPass::visit_epilog( Function& value )
+void CselIRToLLPass::visit_epilog( Function& value, Context& )
 {
     fprintf( stdout,
         "  ret void\n"
@@ -115,18 +115,18 @@ void CselIRToLLPass::visit_epilog( Function& value )
         "\n" );
 }
 
-void CselIRToLLPass::visit_prolog( Intrinsic& value )
+void CselIRToLLPass::visit_prolog( Intrinsic& value, Context& )
 {
     fprintf( stdout,
         "define void @%s ;; Intrinsic\n"
         "( ",
         value.getName() );
 }
-void CselIRToLLPass::visit_interlog( Intrinsic& value )
+void CselIRToLLPass::visit_interlog( Intrinsic& value, Context& )
 {
     fprintf( stdout, "\n)\n{\nbegin:\n" );
 }
-void CselIRToLLPass::visit_epilog( Intrinsic& value )
+void CselIRToLLPass::visit_epilog( Intrinsic& value, Context& )
 {
     fprintf( stdout,
         "  ret void\n"
@@ -134,7 +134,7 @@ void CselIRToLLPass::visit_epilog( Intrinsic& value )
         "\n" );
 }
 
-void CselIRToLLPass::visit_prolog( Reference& value )
+void CselIRToLLPass::visit_prolog( Reference& value, Context& )
 {
     fprintf( stdout, "%s %%%s%s",
         "i32" // value.getType()->getName() // TODO: FIXME!!!
@@ -142,11 +142,11 @@ void CselIRToLLPass::visit_prolog( Reference& value )
         value.getIdentifier()->getName(),
         ( value.getCallableUnit()->isLastParameter( &value ) ? "" : "\n, " ) );
 }
-void CselIRToLLPass::visit_epilog( Reference& value )
+void CselIRToLLPass::visit_epilog( Reference& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( Structure& value )
+void CselIRToLLPass::visit_prolog( Structure& value, Context& )
 {
     if( value.getElements().size() == 0 )
     {
@@ -177,77 +177,77 @@ void CselIRToLLPass::visit_prolog( Structure& value )
         "\n",
         value.getIdentifier()->getName() );
 }
-void CselIRToLLPass::visit_epilog( Structure& value )
+void CselIRToLLPass::visit_epilog( Structure& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( Variable& value )
+void CselIRToLLPass::visit_prolog( Variable& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( Variable& value )
+void CselIRToLLPass::visit_epilog( Variable& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( Memory& value )
+void CselIRToLLPass::visit_prolog( Memory& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( Memory& value )
+void CselIRToLLPass::visit_epilog( Memory& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( ParallelScope& value )
+void CselIRToLLPass::visit_prolog( ParallelScope& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( ParallelScope& value )
+void CselIRToLLPass::visit_epilog( ParallelScope& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( SequentialScope& value )
+void CselIRToLLPass::visit_prolog( SequentialScope& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( SequentialScope& value )
+void CselIRToLLPass::visit_epilog( SequentialScope& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( TrivialStatement& value )
+void CselIRToLLPass::visit_prolog( TrivialStatement& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( TrivialStatement& value )
+void CselIRToLLPass::visit_epilog( TrivialStatement& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( BranchStatement& value )
+void CselIRToLLPass::visit_prolog( BranchStatement& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_interlog( BranchStatement& value )
+void CselIRToLLPass::visit_interlog( BranchStatement& value, Context& )
 {
 }
-void CselIRToLLPass::visit_epilog( BranchStatement& value )
+void CselIRToLLPass::visit_epilog( BranchStatement& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( LoopStatement& value )
+void CselIRToLLPass::visit_prolog( LoopStatement& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_interlog( LoopStatement& value )
+void CselIRToLLPass::visit_interlog( LoopStatement& value, Context& )
 {
 }
-void CselIRToLLPass::visit_epilog( LoopStatement& value )
+void CselIRToLLPass::visit_epilog( LoopStatement& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( CallInstruction& value )
+void CselIRToLLPass::visit_prolog( CallInstruction& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( CallInstruction& value )
+void CselIRToLLPass::visit_epilog( CallInstruction& value, Context& )
 {
 }
 
@@ -255,12 +255,12 @@ void CselIRToLLPass::visit_epilog( CallInstruction& value )
 // IdCallInstruction
 //
 
-void CselIRToLLPass::visit_prolog( IdCallInstruction& value )
+void CselIRToLLPass::visit_prolog( IdCallInstruction& value, Context& )
 {
     TODO;
     assert( 0 );
 }
-void CselIRToLLPass::visit_epilog( IdCallInstruction& value )
+void CselIRToLLPass::visit_epilog( IdCallInstruction& value, Context& )
 {
 }
 
@@ -268,36 +268,36 @@ void CselIRToLLPass::visit_epilog( IdCallInstruction& value )
 // StreamInstruction
 //
 
-void CselIRToLLPass::visit_prolog( StreamInstruction& value )
+void CselIRToLLPass::visit_prolog( StreamInstruction& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( StreamInstruction& value )
+void CselIRToLLPass::visit_epilog( StreamInstruction& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( NopInstruction& value )
+void CselIRToLLPass::visit_prolog( NopInstruction& value, Context& )
 {
     TODO;
     fprintf( stream, "    ;; nop\n" );
 }
-void CselIRToLLPass::visit_epilog( NopInstruction& value )
+void CselIRToLLPass::visit_epilog( NopInstruction& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( AllocInstruction& value )
+void CselIRToLLPass::visit_prolog( AllocInstruction& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( AllocInstruction& value )
+void CselIRToLLPass::visit_epilog( AllocInstruction& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( IdInstruction& value )
+void CselIRToLLPass::visit_prolog( IdInstruction& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( IdInstruction& value )
+void CselIRToLLPass::visit_epilog( IdInstruction& value, Context& )
 {
 }
 
@@ -305,35 +305,35 @@ void CselIRToLLPass::visit_epilog( IdInstruction& value )
 // CastInstruction
 //
 
-void CselIRToLLPass::visit_prolog( CastInstruction& value )
+void CselIRToLLPass::visit_prolog( CastInstruction& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( CastInstruction& value )
+void CselIRToLLPass::visit_epilog( CastInstruction& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( ExtractInstruction& value )
+void CselIRToLLPass::visit_prolog( ExtractInstruction& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( ExtractInstruction& value )
+void CselIRToLLPass::visit_epilog( ExtractInstruction& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( LoadInstruction& value )
+void CselIRToLLPass::visit_prolog( LoadInstruction& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( LoadInstruction& value )
+void CselIRToLLPass::visit_epilog( LoadInstruction& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( StoreInstruction& value )
+void CselIRToLLPass::visit_prolog( StoreInstruction& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( StoreInstruction& value )
+void CselIRToLLPass::visit_epilog( StoreInstruction& value, Context& )
 {
 }
 
@@ -341,12 +341,12 @@ void CselIRToLLPass::visit_epilog( StoreInstruction& value )
 // NotInstruction
 //
 
-void CselIRToLLPass::visit_prolog( NotInstruction& value )
+void CselIRToLLPass::visit_prolog( NotInstruction& value, Context& )
 {
     TODO;
     assert( 0 );
 }
-void CselIRToLLPass::visit_epilog( NotInstruction& value )
+void CselIRToLLPass::visit_epilog( NotInstruction& value, Context& )
 {
 }
 
@@ -354,12 +354,12 @@ void CselIRToLLPass::visit_epilog( NotInstruction& value )
 // AndInstruction
 //
 
-void CselIRToLLPass::visit_prolog( AndInstruction& value )
+void CselIRToLLPass::visit_prolog( AndInstruction& value, Context& )
 {
     TODO;
     assert( 0 );
 }
-void CselIRToLLPass::visit_epilog( AndInstruction& value )
+void CselIRToLLPass::visit_epilog( AndInstruction& value, Context& )
 {
 }
 
@@ -367,12 +367,12 @@ void CselIRToLLPass::visit_epilog( AndInstruction& value )
 // OrInstruction
 //
 
-void CselIRToLLPass::visit_prolog( OrInstruction& value )
+void CselIRToLLPass::visit_prolog( OrInstruction& value, Context& )
 {
     TODO;
     assert( 0 );
 }
-void CselIRToLLPass::visit_epilog( OrInstruction& value )
+void CselIRToLLPass::visit_epilog( OrInstruction& value, Context& )
 {
 }
 
@@ -380,28 +380,28 @@ void CselIRToLLPass::visit_epilog( OrInstruction& value )
 // XorInstruction
 //
 
-void CselIRToLLPass::visit_prolog( XorInstruction& value )
+void CselIRToLLPass::visit_prolog( XorInstruction& value, Context& )
 {
     TODO;
     assert( 0 );
 }
-void CselIRToLLPass::visit_epilog( XorInstruction& value )
+void CselIRToLLPass::visit_epilog( XorInstruction& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( AddSignedInstruction& value )
+void CselIRToLLPass::visit_prolog( AddSignedInstruction& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( AddSignedInstruction& value )
+void CselIRToLLPass::visit_epilog( AddSignedInstruction& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( DivSignedInstruction& value )
+void CselIRToLLPass::visit_prolog( DivSignedInstruction& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( DivSignedInstruction& value )
+void CselIRToLLPass::visit_epilog( DivSignedInstruction& value, Context& )
 {
 }
 
@@ -409,11 +409,11 @@ void CselIRToLLPass::visit_epilog( DivSignedInstruction& value )
 // ModUnsignedInstruction
 //
 
-void CselIRToLLPass::visit_prolog( ModUnsignedInstruction& value )
+void CselIRToLLPass::visit_prolog( ModUnsignedInstruction& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( ModUnsignedInstruction& value )
+void CselIRToLLPass::visit_epilog( ModUnsignedInstruction& value, Context& )
 {
 }
 
@@ -421,11 +421,11 @@ void CselIRToLLPass::visit_epilog( ModUnsignedInstruction& value )
 // EquUnsignedInstruction
 //
 
-void CselIRToLLPass::visit_prolog( EquUnsignedInstruction& value )
+void CselIRToLLPass::visit_prolog( EquUnsignedInstruction& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( EquUnsignedInstruction& value )
+void CselIRToLLPass::visit_epilog( EquUnsignedInstruction& value, Context& )
 {
 }
 
@@ -433,11 +433,11 @@ void CselIRToLLPass::visit_epilog( EquUnsignedInstruction& value )
 // NeqUnsignedInstruction
 //
 
-void CselIRToLLPass::visit_prolog( NeqUnsignedInstruction& value )
+void CselIRToLLPass::visit_prolog( NeqUnsignedInstruction& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( NeqUnsignedInstruction& value )
+void CselIRToLLPass::visit_epilog( NeqUnsignedInstruction& value, Context& )
 {
 }
 
@@ -445,11 +445,11 @@ void CselIRToLLPass::visit_epilog( NeqUnsignedInstruction& value )
 // ZeroExtendInstruction
 //
 
-void CselIRToLLPass::visit_prolog( ZeroExtendInstruction& value )
+void CselIRToLLPass::visit_prolog( ZeroExtendInstruction& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( ZeroExtendInstruction& value )
+void CselIRToLLPass::visit_epilog( ZeroExtendInstruction& value, Context& )
 {
 }
 
@@ -457,27 +457,27 @@ void CselIRToLLPass::visit_epilog( ZeroExtendInstruction& value )
 // TruncationInstruction
 //
 
-void CselIRToLLPass::visit_prolog( TruncationInstruction& value )
+void CselIRToLLPass::visit_prolog( TruncationInstruction& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( TruncationInstruction& value )
+void CselIRToLLPass::visit_epilog( TruncationInstruction& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( BitConstant& value )
+void CselIRToLLPass::visit_prolog( BitConstant& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( BitConstant& value )
+void CselIRToLLPass::visit_epilog( BitConstant& value, Context& )
 {
 }
 
-void CselIRToLLPass::visit_prolog( StructureConstant& value )
+void CselIRToLLPass::visit_prolog( StructureConstant& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( StructureConstant& value )
+void CselIRToLLPass::visit_epilog( StructureConstant& value, Context& )
 {
 }
 
@@ -485,11 +485,11 @@ void CselIRToLLPass::visit_epilog( StructureConstant& value )
 // StringConstant
 //
 
-void CselIRToLLPass::visit_prolog( StringConstant& value )
+void CselIRToLLPass::visit_prolog( StringConstant& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( StringConstant& value )
+void CselIRToLLPass::visit_epilog( StringConstant& value, Context& )
 {
 }
 
@@ -497,11 +497,11 @@ void CselIRToLLPass::visit_epilog( StringConstant& value )
 // Interconnect
 //
 
-void CselIRToLLPass::visit_prolog( Interconnect& value )
+void CselIRToLLPass::visit_prolog( Interconnect& value, Context& )
 {
     TODO;
 }
-void CselIRToLLPass::visit_epilog( Interconnect& value )
+void CselIRToLLPass::visit_epilog( Interconnect& value, Context& )
 {
 }
 

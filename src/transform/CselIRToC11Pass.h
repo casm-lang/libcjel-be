@@ -30,12 +30,13 @@
 
 namespace libcsel_be
 {
-    class CselIRToC11Pass : public libpass::Pass, public libcsel_ir::Visitor
+    class CselIRToC11Pass final : public libpass::Pass,
+                                  public libcsel_ir::Visitor
     {
       public:
         static char id;
 
-        bool run( libpass::PassResult& pr ) override final;
+        bool run( libpass::PassResult& pr ) override;
 
         LIB_CSELIR_VISITOR_INTERFACE;
     };

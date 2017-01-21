@@ -90,7 +90,8 @@ static const char* getTypeString( Value& value )
         // Value* ty = type->getBound();
         // assert( isa< Memory >( ty ) );
         // std::string t
-        //     = std::string( ( (Memory*)ty )->getStructure()->getName() ) + "*";
+        //     = std::string( ( (Memory*)ty )->getStructure()->getName() ) +
+        //     "*";
         // return libstdhl::Allocator::string( t );
         assert( !" PPA: TODO!!! " );
         return 0;
@@ -145,7 +146,7 @@ static const char* indention( Value& value )
 // Module
 //
 
-void CselIRToC11Pass::visit_prolog( Module& value )
+void CselIRToC11Pass::visit_prolog( Module& value, Context& )
 {
     std::chrono::time_point< std::chrono::system_clock > stamp;
     stamp = std::chrono::system_clock::now();
@@ -162,7 +163,7 @@ void CselIRToC11Pass::visit_prolog( Module& value )
         "\n",
         std::ctime( &timestamp ), value.getName() );
 }
-void CselIRToC11Pass::visit_epilog( Module& value )
+void CselIRToC11Pass::visit_epilog( Module& value, Context& )
 {
 }
 
@@ -170,7 +171,7 @@ void CselIRToC11Pass::visit_epilog( Module& value )
 // Function
 //
 
-void CselIRToC11Pass::visit_prolog( Function& value )
+void CselIRToC11Pass::visit_prolog( Function& value, Context& )
 {
     fprintf( stream,
         "// Function '%s'\n"
@@ -188,7 +189,7 @@ void CselIRToC11Pass::visit_prolog( Function& value )
             ( value.getParameterLength() == 0 ? "" : "\n, " ) );
     }
 }
-void CselIRToC11Pass::visit_interlog( Function& value )
+void CselIRToC11Pass::visit_interlog( Function& value, Context& )
 {
     fprintf( stream,
         "\n"
@@ -239,7 +240,7 @@ void CselIRToC11Pass::visit_interlog( Function& value )
                 //     "assert( %s );\n",
                 //     mem_type, ref->getLabel(), tmp.c_str(), mem->getSize(),
                 //     ref->getIdentifier()->getName(), ref->getLabel() );
-                
+
                 // // fprintf
                 // // ( stream
                 // // , "%s = malloc( sizeof( %s ) * %u ); // linkage '%s'\n"
@@ -262,7 +263,8 @@ void CselIRToC11Pass::visit_interlog( Function& value )
 
                 // Interconnect* ic = (Interconnect*)origin;
 
-                // // TODO: FIXME: PPA: HACK: needs better implemented directly in
+                // // TODO: FIXME: PPA: HACK: needs better implemented directly
+                // in
                 // // the CSELBE model
                 // Module* m = value.getRef< Module >();
                 // assert( m and m->has< Variable >() );
@@ -287,7 +289,7 @@ void CselIRToC11Pass::visit_interlog( Function& value )
         }
     }
 }
-void CselIRToC11Pass::visit_epilog( Function& value )
+void CselIRToC11Pass::visit_epilog( Function& value, Context& )
 {
     if( value.getLinkage().size() > 0 )
     {
@@ -314,7 +316,7 @@ void CselIRToC11Pass::visit_epilog( Function& value )
 // Intrinsic
 //
 
-void CselIRToC11Pass::visit_prolog( Intrinsic& value )
+void CselIRToC11Pass::visit_prolog( Intrinsic& value, Context& )
 {
     fprintf( stream,
         "// Intrinsic '%s'\n"
@@ -324,20 +326,20 @@ void CselIRToC11Pass::visit_prolog( Intrinsic& value )
 
     assert( value.getLinkage().size() == 0 );
 }
-void CselIRToC11Pass::visit_interlog( Intrinsic& value )
+void CselIRToC11Pass::visit_interlog( Intrinsic& value, Context& c )
 {
-    visit_interlog( *( (Function*)( &value ) ) );
+    visit_interlog( reinterpret_cast< Function& >( value ), c );
 }
-void CselIRToC11Pass::visit_epilog( Intrinsic& value )
+void CselIRToC11Pass::visit_epilog( Intrinsic& value, Context& c )
 {
-    visit_epilog( *( (Function*)( &value ) ) );
+    visit_epilog( reinterpret_cast< Function& >( value ), c );
 }
 
 //
 // Reference
 //
 
-void CselIRToC11Pass::visit_prolog( Reference& value )
+void CselIRToC11Pass::visit_prolog( Reference& value, Context& )
 {
     const char* kind = "link";
     if( value.isInput() )
@@ -354,14 +356,13 @@ void CselIRToC11Pass::visit_prolog( Reference& value )
     }
 
     fprintf( stream, "%s%s %s // %s %s%s", getTypeString( value ),
-        ( ( value.getType()->getID() == Type::STRUCTURE
-              or value.isOutput() )
+        ( ( value.getType()->getID() == Type::STRUCTURE or value.isOutput() )
                 ? "*"
                 : "" ),
         value.getLabel(), value.getIdentifier()->getName(), kind,
         ( value.getCallableUnit()->isLastParameter( &value ) ? "" : "\n, " ) );
 }
-void CselIRToC11Pass::visit_epilog( Reference& value )
+void CselIRToC11Pass::visit_epilog( Reference& value, Context& )
 {
 }
 
@@ -369,7 +370,7 @@ void CselIRToC11Pass::visit_epilog( Reference& value )
 // Structure
 //
 
-void CselIRToC11Pass::visit_prolog( Structure& value )
+void CselIRToC11Pass::visit_prolog( Structure& value, Context& )
 {
     Module* m = value.getRef< Module >();
 
@@ -396,7 +397,7 @@ void CselIRToC11Pass::visit_prolog( Structure& value )
         "\n",
         getTypeString( value ) );
 }
-void CselIRToC11Pass::visit_epilog( Structure& value )
+void CselIRToC11Pass::visit_epilog( Structure& value, Context& )
 {
 }
 
@@ -404,7 +405,7 @@ void CselIRToC11Pass::visit_epilog( Structure& value )
 // Variable
 //
 
-void CselIRToC11Pass::visit_prolog( Variable& value )
+void CselIRToC11Pass::visit_prolog( Variable& value, Context& )
 {
     static Value n( "", Type::getTypeID(), libcsel_ir::Value::VALUE );
 
@@ -418,7 +419,7 @@ void CselIRToC11Pass::visit_prolog( Variable& value )
     // static u64 var_allocation = 0;
 
     fprintf( stream, "const %s %s = %lu; // '%s'\n", getTypeString( n ),
-        value.getLabel(), value.getAllocationID()->getValue()[ 0 ],
+        value.getLabel(), value.getAllocationID()->getValue(),
         value.getIdent() );
 
     // var_allocation++;
@@ -431,7 +432,7 @@ void CselIRToC11Pass::visit_prolog( Variable& value )
     // , value.getIdent()
     // );
 }
-void CselIRToC11Pass::visit_epilog( Variable& value )
+void CselIRToC11Pass::visit_epilog( Variable& value, Context& )
 {
     Module* m = value.getRef< Module >();
 
@@ -445,7 +446,7 @@ void CselIRToC11Pass::visit_epilog( Variable& value )
 // Memory
 //
 
-void CselIRToC11Pass::visit_prolog( Memory& value )
+void CselIRToC11Pass::visit_prolog( Memory& value, Context& )
 {
     Module* m = value.getRef< Module >();
     if( m->get< Memory >().front() == &value )
@@ -455,11 +456,11 @@ void CselIRToC11Pass::visit_prolog( Memory& value )
 
     assert( !" PPA: TODO!!! " );
 
-    
-    // fprintf( stream, "//%s* %s = 0; // size = '%u'\n", getTypeString( value ),
+    // fprintf( stream, "//%s* %s = 0; // size = '%u'\n", getTypeString( value
+    // ),
     //     value.getLabel(), value.getSize() );
 }
-void CselIRToC11Pass::visit_epilog( Memory& value )
+void CselIRToC11Pass::visit_epilog( Memory& value, Context& )
 {
     Module* m = value.getRef< Module >();
     if( m->get< Memory >().back() == &value )
@@ -499,14 +500,14 @@ static void non_trivial_statement( Scope& value )
 // ParallelScope
 //
 
-void CselIRToC11Pass::visit_prolog( ParallelScope& value )
+void CselIRToC11Pass::visit_prolog( ParallelScope& value, Context& )
 {
     non_trivial_statement( value );
 
     fprintf(
         stream, "%s{ // par '%s'\n", indention( value ), value.getLabel() );
 }
-void CselIRToC11Pass::visit_epilog( ParallelScope& value )
+void CselIRToC11Pass::visit_epilog( ParallelScope& value, Context& )
 {
     fprintf( stream, "%s}\n", indention( value ) );
 }
@@ -515,30 +516,30 @@ void CselIRToC11Pass::visit_epilog( ParallelScope& value )
 // SequentialScope
 //
 
-void CselIRToC11Pass::visit_prolog( SequentialScope& value )
+void CselIRToC11Pass::visit_prolog( SequentialScope& value, Context& )
 {
     non_trivial_statement( value );
 
     fprintf(
         stream, "%s{ // seq '%s'\n", indention( value ), value.getLabel() );
 }
-void CselIRToC11Pass::visit_epilog( SequentialScope& value )
+void CselIRToC11Pass::visit_epilog( SequentialScope& value, Context& c )
 {
-    visit_epilog( *( (ParallelScope*)( &value ) ) );
+    visit_epilog( reinterpret_cast< ParallelScope& >( value ), c );
 }
 
 //
 // TrivialStatement
 //
 
-void CselIRToC11Pass::visit_prolog( TrivialStatement& value )
+void CselIRToC11Pass::visit_prolog( TrivialStatement& value, Context& )
 {
     fprintf( stream,
         "%s// stmt '%s'\n"
         "%s{\n",
         indention( value ), value.getLabel(), indention( value ) );
 }
-void CselIRToC11Pass::visit_epilog( TrivialStatement& value )
+void CselIRToC11Pass::visit_epilog( TrivialStatement& value, Context& )
 {
     fprintf( stream, "%s}\n", indention( value ) );
 }
@@ -547,26 +548,26 @@ void CselIRToC11Pass::visit_epilog( TrivialStatement& value )
 // BranchStatement
 //
 
-void CselIRToC11Pass::visit_prolog( BranchStatement& value )
+void CselIRToC11Pass::visit_prolog( BranchStatement& value, Context& )
 {
     fprintf( stream,
         "%s// branch '%s'\n"
         "%s{\n",
         indention( value ), value.getLabel(), indention( value ) );
 }
-void CselIRToC11Pass::visit_interlog( BranchStatement& value )
+void CselIRToC11Pass::visit_interlog( BranchStatement& value, Context& )
 {
 }
-void CselIRToC11Pass::visit_epilog( BranchStatement& value )
+void CselIRToC11Pass::visit_epilog( BranchStatement& value, Context& c )
 {
-    visit_epilog( *( (TrivialStatement*)( &value ) ) );
+    visit_epilog( reinterpret_cast< TrivialStatement& >( value ), c );
 }
 
 //
 // LoopStatement
 //
 
-void CselIRToC11Pass::visit_prolog( LoopStatement& value )
+void CselIRToC11Pass::visit_prolog( LoopStatement& value, Context& )
 {
     fprintf( stream,
         "%s// loop '%s'\n"
@@ -575,7 +576,7 @@ void CselIRToC11Pass::visit_prolog( LoopStatement& value )
         indention( value ), value.getLabel(), indention( value ),
         indention( value ) );
 }
-void CselIRToC11Pass::visit_interlog( LoopStatement& value )
+void CselIRToC11Pass::visit_interlog( LoopStatement& value, Context& )
 {
     Value* expr = (Value*)value.getInstructions().back();
     assert( expr );
@@ -590,16 +591,16 @@ void CselIRToC11Pass::visit_interlog( LoopStatement& value )
         indention( value ), expr->getLabel(), indention( value ),
         indention( value ), indention( value ), indention( value ) );
 }
-void CselIRToC11Pass::visit_epilog( LoopStatement& value )
+void CselIRToC11Pass::visit_epilog( LoopStatement& value, Context& c )
 {
-    visit_epilog( *( (TrivialStatement*)( &value ) ) );
+    visit_epilog( reinterpret_cast< TrivialStatement& >( value ), c );
 }
 
 //
 // CallInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( CallInstruction& value )
+void CselIRToC11Pass::visit_prolog( CallInstruction& value, Context& )
 {
     fprintf( stream, "%s%s( ", indention( value ),
         ( isa< CastInstruction >( value.getValue( 0 ) ) )
@@ -631,8 +632,7 @@ void CselIRToC11Pass::visit_prolog( CallInstruction& value )
         }
 
         const char* kind = ")";
-        if( isa< Instruction >( v )
-            and cnt > cu->getInParameters().size() )
+        if( isa< Instruction >( v ) and cnt > cu->getInParameters().size() )
         {
             kind = "*)&";
         }
@@ -687,7 +687,7 @@ void CselIRToC11Pass::visit_prolog( CallInstruction& value )
 
     fprintf( stream, " ); // call %lu\n", value.getValues().size() - 1 );
 }
-void CselIRToC11Pass::visit_epilog( CallInstruction& value )
+void CselIRToC11Pass::visit_epilog( CallInstruction& value, Context& )
 {
 }
 
@@ -695,7 +695,7 @@ void CselIRToC11Pass::visit_epilog( CallInstruction& value )
 // IdCallInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( IdCallInstruction& value )
+void CselIRToC11Pass::visit_prolog( IdCallInstruction& value, Context& )
 {
     const char* indent = indention( value );
 
@@ -725,8 +725,7 @@ void CselIRToC11Pass::visit_prolog( IdCallInstruction& value )
         }
 
         const char* kind = ")";
-        if( isa< Instruction >( v )
-            and cnt > cs->getInParameters().size() )
+        if( isa< Instruction >( v ) and cnt > cs->getInParameters().size() )
         {
             kind = "*)&";
         }
@@ -778,8 +777,7 @@ void CselIRToC11Pass::visit_prolog( IdCallInstruction& value )
         // call argument types!!!
 
         fprintf( stream, "%s    case %lu: { %s( %s ); break; }\n", indent,
-            cu->getAllocationID()->getValue()[ 0 ], cu->getName(),
-            args.c_str() );
+            cu->getAllocationID()->getValue(), cu->getName(), args.c_str() );
     }
 
     fprintf( stream,
@@ -787,7 +785,7 @@ void CselIRToC11Pass::visit_prolog( IdCallInstruction& value )
         "%s};\n",
         indent, indent );
 }
-void CselIRToC11Pass::visit_epilog( IdCallInstruction& value )
+void CselIRToC11Pass::visit_epilog( IdCallInstruction& value, Context& )
 {
 }
 
@@ -806,7 +804,7 @@ static void replace(
     }
 }
 
-void CselIRToC11Pass::visit_prolog( StreamInstruction& value )
+void CselIRToC11Pass::visit_prolog( StreamInstruction& value, Context& )
 {
     assert( value.getChannel() == StreamInstruction::OUTPUT );
 
@@ -839,7 +837,7 @@ void CselIRToC11Pass::visit_prolog( StreamInstruction& value )
     fprintf( stream, "%sfprintf( %s, %s%s );\n", indention( value ), channel,
         fmt.c_str(), arg.c_str() );
 }
-void CselIRToC11Pass::visit_epilog( StreamInstruction& value )
+void CselIRToC11Pass::visit_epilog( StreamInstruction& value, Context& )
 {
 }
 
@@ -847,11 +845,11 @@ void CselIRToC11Pass::visit_epilog( StreamInstruction& value )
 // NopInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( NopInstruction& value )
+void CselIRToC11Pass::visit_prolog( NopInstruction& value, Context& )
 {
     fprintf( stream, "%s// nop\n", indention( value ) );
 }
-void CselIRToC11Pass::visit_epilog( NopInstruction& value )
+void CselIRToC11Pass::visit_epilog( NopInstruction& value, Context& )
 {
 }
 
@@ -859,12 +857,12 @@ void CselIRToC11Pass::visit_epilog( NopInstruction& value )
 // AllocInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( AllocInstruction& value )
+void CselIRToC11Pass::visit_prolog( AllocInstruction& value, Context& )
 {
     fprintf( stream, "%s%s %s;// alloc\n", indention( value ),
         getTypeString( value ), value.getLabel() );
 }
-void CselIRToC11Pass::visit_epilog( AllocInstruction& value )
+void CselIRToC11Pass::visit_epilog( AllocInstruction& value, Context& )
 {
 }
 
@@ -872,21 +870,21 @@ void CselIRToC11Pass::visit_epilog( AllocInstruction& value )
 // IdInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( IdInstruction& value )
+void CselIRToC11Pass::visit_prolog( IdInstruction& value, Context& )
 {
     const char* id = value.get()->getLabel();
 
     if( isa< CallableUnit >( value.get() ) )
     {
         CallableUnit* c = (CallableUnit*)value.get();
-        u64 id_num = c->getAllocationID()->getValue()[ 0 ];
+        u64 id_num = c->getAllocationID()->getValue();
         id = libstdhl::Allocator::string( std::to_string( id_num ) );
     }
 
     fprintf( stream, "%s%s %s = (%s)%s;// id\n", indention( value ),
         getTypeString( value ), value.getLabel(), getTypeString( value ), id );
 }
-void CselIRToC11Pass::visit_epilog( IdInstruction& value )
+void CselIRToC11Pass::visit_epilog( IdInstruction& value, Context& )
 {
 }
 
@@ -894,7 +892,7 @@ void CselIRToC11Pass::visit_epilog( IdInstruction& value )
 // CastInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( CastInstruction& value )
+void CselIRToC11Pass::visit_prolog( CastInstruction& value, Context& )
 {
     Value* kind = value.getLHS();
     Value* src = value.getRHS();
@@ -923,7 +921,7 @@ void CselIRToC11Pass::visit_prolog( CastInstruction& value )
         assert( !" unsupported feature !!! " );
     }
 }
-void CselIRToC11Pass::visit_epilog( CastInstruction& value )
+void CselIRToC11Pass::visit_epilog( CastInstruction& value, Context& )
 {
 }
 
@@ -931,13 +929,12 @@ void CselIRToC11Pass::visit_epilog( CastInstruction& value )
 // ExtractInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( ExtractInstruction& value )
+void CselIRToC11Pass::visit_prolog( ExtractInstruction& value, Context& )
 {
     Value* base_ = value.getLHS();
     Value* offset_ = value.getRHS();
 
-    if( isa< AllocInstruction >( base_ )
-        and isa< Structure >( offset_ ) )
+    if( isa< AllocInstruction >( base_ ) and isa< Structure >( offset_ ) )
     {
         Structure* offset = (Structure*)offset_;
 
@@ -948,8 +945,7 @@ void CselIRToC11Pass::visit_prolog( ExtractInstruction& value )
         return;
     }
 
-    assert( isa< Reference >( base_ )
-            or isa< CastInstruction >( base_ ) );
+    assert( isa< Reference >( base_ ) or isa< CastInstruction >( base_ ) );
     Reference* base = (Reference*)base_;
 
     if( isa< Structure >( offset_ ) )
@@ -988,7 +984,7 @@ void CselIRToC11Pass::visit_prolog( ExtractInstruction& value )
         assert( !" unsupported/unimplemented feature! " );
     }
 }
-void CselIRToC11Pass::visit_epilog( ExtractInstruction& value )
+void CselIRToC11Pass::visit_epilog( ExtractInstruction& value, Context& )
 {
 }
 
@@ -996,12 +992,11 @@ void CselIRToC11Pass::visit_epilog( ExtractInstruction& value )
 // LoadInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( LoadInstruction& value )
+void CselIRToC11Pass::visit_prolog( LoadInstruction& value, Context& )
 {
     Value* addr_ = value.get();
 
-    if( isa< ExtractInstruction >( addr_ )
-        or isa< CastInstruction >( addr_ ) )
+    if( isa< ExtractInstruction >( addr_ ) or isa< CastInstruction >( addr_ ) )
     {
         fprintf( stream, "%s%s %s = *%s; // load\n", indention( value ),
             getTypeString( value ), value.getLabel(), addr_->getLabel() );
@@ -1049,7 +1044,7 @@ void CselIRToC11Pass::visit_prolog( LoadInstruction& value )
     //     );
     // }
 }
-void CselIRToC11Pass::visit_epilog( LoadInstruction& value )
+void CselIRToC11Pass::visit_epilog( LoadInstruction& value, Context& )
 {
 }
 
@@ -1057,7 +1052,7 @@ void CselIRToC11Pass::visit_epilog( LoadInstruction& value )
 // StoreInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( StoreInstruction& value )
+void CselIRToC11Pass::visit_prolog( StoreInstruction& value, Context& )
 {
     Value* dst = value.getRHS();
     Value* src = value.getLHS();
@@ -1065,8 +1060,7 @@ void CselIRToC11Pass::visit_prolog( StoreInstruction& value )
     if( isa< ExtractInstruction >( dst ) )
     {
         fprintf( stream, "%s*%s = %s%s; // store '%s'\n", indention( value ),
-            dst->getLabel(),
-            ( isa< ExtractInstruction >( src ) ? "*" : "" ),
+            dst->getLabel(), ( isa< ExtractInstruction >( src ) ? "*" : "" ),
             src->getLabel(), value.getLabel() );
     }
     else if( isa< Reference >( dst ) )
@@ -1076,9 +1070,8 @@ void CselIRToC11Pass::visit_prolog( StoreInstruction& value )
 
         fprintf( stream, "%s*%s = %s%s; // store '%s' ['%s']\n",
             indention( value ), ref->getLabel(),
-            ( isa< CastInstruction >( src ) ? "*" : "" ),
-            src->getLabel(), value.getLabel(),
-            ref->getIdentifier()->getName() );
+            ( isa< CastInstruction >( src ) ? "*" : "" ), src->getLabel(),
+            value.getLabel(), ref->getIdentifier()->getName() );
     }
     else
     {
@@ -1086,7 +1079,7 @@ void CselIRToC11Pass::visit_prolog( StoreInstruction& value )
         assert( !" unimplemented feature! " );
     }
 }
-void CselIRToC11Pass::visit_epilog( StoreInstruction& value )
+void CselIRToC11Pass::visit_epilog( StoreInstruction& value, Context& )
 {
 }
 
@@ -1101,12 +1094,12 @@ static void instr( BinaryInstruction& value, const char* op )
 // NotInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( NotInstruction& value )
+void CselIRToC11Pass::visit_prolog( NotInstruction& value, Context& )
 {
     fprintf( stream, "%s%s %s = (~ %s);\n", indention( value ),
         getTypeString( value ), value.getLabel(), value.get()->getLabel() );
 }
-void CselIRToC11Pass::visit_epilog( NotInstruction& value )
+void CselIRToC11Pass::visit_epilog( NotInstruction& value, Context& )
 {
 }
 
@@ -1114,11 +1107,11 @@ void CselIRToC11Pass::visit_epilog( NotInstruction& value )
 // AndInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( AndInstruction& value )
+void CselIRToC11Pass::visit_prolog( AndInstruction& value, Context& )
 {
     instr( value, "&" );
 }
-void CselIRToC11Pass::visit_epilog( AndInstruction& value )
+void CselIRToC11Pass::visit_epilog( AndInstruction& value, Context& )
 {
 }
 
@@ -1126,12 +1119,12 @@ void CselIRToC11Pass::visit_epilog( AndInstruction& value )
 // OrInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( OrInstruction& value )
+void CselIRToC11Pass::visit_prolog( OrInstruction& value, Context& )
 {
     TODO;
     assert( 0 );
 }
-void CselIRToC11Pass::visit_epilog( OrInstruction& value )
+void CselIRToC11Pass::visit_epilog( OrInstruction& value, Context& )
 {
 }
 
@@ -1139,11 +1132,11 @@ void CselIRToC11Pass::visit_epilog( OrInstruction& value )
 // XorInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( XorInstruction& value )
+void CselIRToC11Pass::visit_prolog( XorInstruction& value, Context& )
 {
     instr( value, "^" );
 }
-void CselIRToC11Pass::visit_epilog( XorInstruction& value )
+void CselIRToC11Pass::visit_epilog( XorInstruction& value, Context& )
 {
 }
 
@@ -1151,11 +1144,11 @@ void CselIRToC11Pass::visit_epilog( XorInstruction& value )
 // AddSignedInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( AddSignedInstruction& value )
+void CselIRToC11Pass::visit_prolog( AddSignedInstruction& value, Context& )
 {
     instr( value, "+" );
 }
-void CselIRToC11Pass::visit_epilog( AddSignedInstruction& value )
+void CselIRToC11Pass::visit_epilog( AddSignedInstruction& value, Context& )
 {
 }
 
@@ -1163,11 +1156,11 @@ void CselIRToC11Pass::visit_epilog( AddSignedInstruction& value )
 // DivSignedInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( DivSignedInstruction& value )
+void CselIRToC11Pass::visit_prolog( DivSignedInstruction& value, Context& )
 {
     instr( value, "/" );
 }
-void CselIRToC11Pass::visit_epilog( DivSignedInstruction& value )
+void CselIRToC11Pass::visit_epilog( DivSignedInstruction& value, Context& )
 {
 }
 
@@ -1175,11 +1168,11 @@ void CselIRToC11Pass::visit_epilog( DivSignedInstruction& value )
 // ModUnsignedInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( ModUnsignedInstruction& value )
+void CselIRToC11Pass::visit_prolog( ModUnsignedInstruction& value, Context& )
 {
     instr( value, "%" );
 }
-void CselIRToC11Pass::visit_epilog( ModUnsignedInstruction& value )
+void CselIRToC11Pass::visit_epilog( ModUnsignedInstruction& value, Context& )
 {
 }
 
@@ -1187,11 +1180,11 @@ void CselIRToC11Pass::visit_epilog( ModUnsignedInstruction& value )
 // EquUnsignedInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( EquUnsignedInstruction& value )
+void CselIRToC11Pass::visit_prolog( EquUnsignedInstruction& value, Context& )
 {
     instr( value, "==" );
 }
-void CselIRToC11Pass::visit_epilog( EquUnsignedInstruction& value )
+void CselIRToC11Pass::visit_epilog( EquUnsignedInstruction& value, Context& )
 {
 }
 
@@ -1199,11 +1192,11 @@ void CselIRToC11Pass::visit_epilog( EquUnsignedInstruction& value )
 // NeqUnsignedInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( NeqUnsignedInstruction& value )
+void CselIRToC11Pass::visit_prolog( NeqUnsignedInstruction& value, Context& )
 {
     instr( value, "!=" );
 }
-void CselIRToC11Pass::visit_epilog( NeqUnsignedInstruction& value )
+void CselIRToC11Pass::visit_epilog( NeqUnsignedInstruction& value, Context& )
 {
 }
 
@@ -1218,7 +1211,7 @@ static void cast( UnaryInstruction& value, const char* comment )
 // ZeroExtendInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( ZeroExtendInstruction& value )
+void CselIRToC11Pass::visit_prolog( ZeroExtendInstruction& value, Context& )
 {
     if( not isa< ExtractInstruction >( value.get() ) )
     {
@@ -1231,7 +1224,7 @@ void CselIRToC11Pass::visit_prolog( ZeroExtendInstruction& value )
             "zext" );
     }
 }
-void CselIRToC11Pass::visit_epilog( ZeroExtendInstruction& value )
+void CselIRToC11Pass::visit_epilog( ZeroExtendInstruction& value, Context& )
 {
 }
 
@@ -1239,7 +1232,7 @@ void CselIRToC11Pass::visit_epilog( ZeroExtendInstruction& value )
 // TruncationInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( TruncationInstruction& value )
+void CselIRToC11Pass::visit_prolog( TruncationInstruction& value, Context& )
 {
     // if( not isa< LoadInstruction >( value.get() ) )
     // {
@@ -1252,7 +1245,7 @@ void CselIRToC11Pass::visit_prolog( TruncationInstruction& value )
             "trunc" );
     }
 }
-void CselIRToC11Pass::visit_epilog( TruncationInstruction& value )
+void CselIRToC11Pass::visit_epilog( TruncationInstruction& value, Context& )
 {
 }
 
@@ -1260,7 +1253,7 @@ void CselIRToC11Pass::visit_epilog( TruncationInstruction& value )
 // BitConstant
 //
 
-void CselIRToC11Pass::visit_prolog( BitConstant& value )
+void CselIRToC11Pass::visit_prolog( BitConstant& value, Context& )
 {
     if( module->get< Constant >().front() == &value )
     {
@@ -1283,7 +1276,7 @@ void CselIRToC11Pass::visit_prolog( BitConstant& value )
     //         value.getLabel(), value.getValue()[ 0 ] );
     // }
 }
-void CselIRToC11Pass::visit_epilog( BitConstant& value )
+void CselIRToC11Pass::visit_epilog( BitConstant& value, Context& )
 {
     // if( not value.isBound() )
     // {
@@ -1298,7 +1291,7 @@ void CselIRToC11Pass::visit_epilog( BitConstant& value )
 // StructureConstant
 //
 
-void CselIRToC11Pass::visit_prolog( StructureConstant& value )
+void CselIRToC11Pass::visit_prolog( StructureConstant& value, Context& )
 {
     assert( !" PPA: TODO!!! " );
     // if( module->get< Constant >().front() == &value )
@@ -1307,9 +1300,10 @@ void CselIRToC11Pass::visit_prolog( StructureConstant& value )
     // }
 
     // fprintf(
-    //     stream, "const %s %s = { ", getTypeString( value ), value.getLabel() );
+    //     stream, "const %s %s = { ", getTypeString( value ), value.getLabel()
+    //     );
 }
-void CselIRToC11Pass::visit_epilog( StructureConstant& value )
+void CselIRToC11Pass::visit_epilog( StructureConstant& value, Context& )
 {
     assert( !" PPA: TODO!!! " );
     // fprintf( stream, " };\n" );
@@ -1324,11 +1318,11 @@ void CselIRToC11Pass::visit_epilog( StructureConstant& value )
 // StringConstant
 //
 
-void CselIRToC11Pass::visit_prolog( StringConstant& value )
+void CselIRToC11Pass::visit_prolog( StringConstant& value, Context& )
 {
     assert( !" PPA: TODO!!! " );
 
-// StructureConstant* sc = 0;
+    // StructureConstant* sc = 0;
     // if( value.isBound() )
     // {
     //     sc = value.getBound();
@@ -1342,7 +1336,7 @@ void CselIRToC11Pass::visit_prolog( StringConstant& value )
     //         value.getLabel(), value.getValue() );
     // }
 }
-void CselIRToC11Pass::visit_epilog( StringConstant& value )
+void CselIRToC11Pass::visit_epilog( StringConstant& value, Context& )
 {
 }
 
@@ -1350,11 +1344,11 @@ void CselIRToC11Pass::visit_epilog( StringConstant& value )
 // Interconnect
 //
 
-void CselIRToC11Pass::visit_prolog( Interconnect& value )
+void CselIRToC11Pass::visit_prolog( Interconnect& value, Context& )
 {
     // TODO: FIXME: PPA: different implementation in the future here!!!
 }
-void CselIRToC11Pass::visit_epilog( Interconnect& value )
+void CselIRToC11Pass::visit_epilog( Interconnect& value, Context& )
 {
 }
 

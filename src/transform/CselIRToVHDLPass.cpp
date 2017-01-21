@@ -118,7 +118,7 @@ static const char* getTypeString( Value& value )
     // {
     //     assert( !"unimplemented or unsupported type to convert!" );
     // }
-    
+
     assert( !" PPA: TODO!!! " );
     return 0;
 }
@@ -140,15 +140,14 @@ static void emit_statement_wires( Statement& value )
 
             if( isa< CallableUnit >( id_kind ) )
             {
-                std::bitset< 48 > v( ( (CallableUnit*)id_kind )
-                                         ->getAllocationID()
-                                         ->getValue()[ 0 ] );
+                std::bitset< 48 > v(
+                    ( (CallableUnit*)id_kind )->getAllocationID()->getValue() );
                 id = v.to_string().c_str();
             }
             else if( isa< Variable >( id_instr->get() ) )
             {
-                std::bitset< 48 >
-                v( ( (Variable*)id_kind )->getAllocationID()->getValue()[ 0 ] );
+                std::bitset< 48 > v(
+                    ( (Variable*)id_kind )->getAllocationID()->getValue() );
                 id = v.to_string().c_str();
             }
             else
@@ -291,8 +290,10 @@ static void emit_wire( Value& value )
         //         "others => '0' );\n"
         //         "signal mem_data_%s : std_logic_vector( %u downto 0 ) := ( "
         //         "others => '0' );\n",
-        //         linkage->getLabel(), linkage->getLabel(), linkage->getLabel(),
-        //         linkage->getLabel(), linkage->getLabel(), linkage->getLabel(),
+        //         linkage->getLabel(), linkage->getLabel(),
+        //         linkage->getLabel(),
+        //         linkage->getLabel(), linkage->getLabel(),
+        //         linkage->getLabel(),
         //         mem->getStructure()->getType()->getSize() - 1 );
 
         //     continue;
@@ -581,7 +582,7 @@ static void emit_conversion_functions( void )
 // Module
 //
 
-void CselIRToVHDLPass::visit_prolog( Module& value )
+void CselIRToVHDLPass::visit_prolog( Module& value, Context& c )
 {
     instruction_implementation = false;
 
@@ -601,22 +602,21 @@ void CselIRToVHDLPass::visit_prolog( Module& value )
 
     for( Value* v : ( *Value::getSymbols() )[ ".instruction" ] )
     {
-        if( isa< IdInstruction >( v )
-            or isa< CallInstruction >( v )
+        if( isa< IdInstruction >( v ) or isa< CallInstruction >( v )
             or isa< IdCallInstruction >( v ) )
         {
             continue;
         }
-        this->dispatch( Visitor::Stage::PROLOG, v );
+        this->dispatch( Visitor::Stage::PROLOG, *v, c );
     }
 
-    module->iterate( Traversal::PREORDER, [this]( Value* v ) {
+    // module->iterate( Traversal::PREORDER, [this]( Value& v ) {
 
-    } );
+    // } );
 
     instruction_implementation = false;
 }
-void CselIRToVHDLPass::visit_epilog( Module& value )
+void CselIRToVHDLPass::visit_epilog( Module& value, Context& )
 {
     fprintf( stream, "-- end of module: '%s'\n\n", value.getName() );
 }
@@ -625,7 +625,7 @@ void CselIRToVHDLPass::visit_epilog( Module& value )
 // Function
 //
 
-void CselIRToVHDLPass::visit_prolog( Function& value )
+void CselIRToVHDLPass::visit_prolog( Function& value, Context& )
 {
     fprintf( stream,
         "-- Function '%s'\n"
@@ -642,7 +642,7 @@ void CselIRToVHDLPass::visit_prolog( Function& value )
         value.getLabel(), value.getName(),
         value.getParameterLength() == 0 ? "" : "\n; " );
 }
-void CselIRToVHDLPass::visit_interlog( Function& value )
+void CselIRToVHDLPass::visit_interlog( Function& value, Context& )
 {
     std::string tmp( "\n;" );
 
@@ -670,7 +670,7 @@ void CselIRToVHDLPass::visit_interlog( Function& value )
         if( linkage->getType()->getID() == Type::INTERCONNECT )
         {
             assert( !" PPA: TODO!!! " );
-            
+
             // Value* bind = linkage->getType()->getBound();
             // assert( isa< Interconnect >( bind ) );
             // Interconnect* ict = (Interconnect*)bind;
@@ -679,7 +679,8 @@ void CselIRToVHDLPass::visit_interlog( Function& value )
             //     "  ict_%s: entity work.%s port map( ict_req_%s, ict_ack_%s, "
             //     "ict_addr_%s, ict_data_%s",
             //     linkage->getLabel(), ict->getLabel(), linkage->getLabel(),
-            //     linkage->getLabel(), linkage->getLabel(), linkage->getLabel() );
+            //     linkage->getLabel(), linkage->getLabel(), linkage->getLabel()
+            //     );
 
             // for( auto w : value.getLinkage() )
             // {
@@ -703,8 +704,10 @@ void CselIRToVHDLPass::visit_interlog( Function& value )
         //         "  mem_%s: entity work.memory generic map ( 48, 114 ) port "
         //         "map( mem_req_%s, mem_ack_%s, mem_mode_%s, mem_addr_%s, "
         //         "mem_data_%s );\n",
-        //         linkage->getLabel(), linkage->getLabel(), linkage->getLabel(),
-        //         linkage->getLabel(), linkage->getLabel(), linkage->getLabel() );
+        //         linkage->getLabel(), linkage->getLabel(),
+        //         linkage->getLabel(),
+        //         linkage->getLabel(), linkage->getLabel(), linkage->getLabel()
+        //         );
         // }
         else
         {
@@ -718,7 +721,7 @@ void CselIRToVHDLPass::visit_interlog( Function& value )
         value.getLabel(), value.getContext()->getLabel(),
         value.getContext()->getLabel(), value.getContext()->getLabel() );
 }
-void CselIRToVHDLPass::visit_epilog( Function& value )
+void CselIRToVHDLPass::visit_epilog( Function& value, Context& )
 {
     fprintf( stream,
         "end \\@%s@\\;\n"
@@ -730,7 +733,7 @@ void CselIRToVHDLPass::visit_epilog( Function& value )
 // Intrinsic
 //
 
-void CselIRToVHDLPass::visit_prolog( Intrinsic& value )
+void CselIRToVHDLPass::visit_prolog( Intrinsic& value, Context& )
 {
     fprintf( stream,
         "-- Intrinsic '%s'\n"
@@ -747,20 +750,20 @@ void CselIRToVHDLPass::visit_prolog( Intrinsic& value )
         value.getLabel(), value.getName(),
         value.getParameterLength() == 0 ? "" : "\n; " );
 }
-void CselIRToVHDLPass::visit_interlog( Intrinsic& value )
+void CselIRToVHDLPass::visit_interlog( Intrinsic& value, Context& c )
 {
-    visit_interlog( *( (Function*)( &value ) ) );
+    visit_interlog( reinterpret_cast< Function& >( value ), c );
 }
-void CselIRToVHDLPass::visit_epilog( Intrinsic& value )
+void CselIRToVHDLPass::visit_epilog( Intrinsic& value, Context& c )
 {
-    visit_epilog( *( (Function*)( &value ) ) );
+    visit_epilog( reinterpret_cast< Function& >( value ), c );
 }
 
 //
 // Reference
 //
 
-void CselIRToVHDLPass::visit_prolog( Reference& value )
+void CselIRToVHDLPass::visit_prolog( Reference& value, Context& )
 {
     const char* kind = "link";
     if( value.isInput() )
@@ -804,7 +807,8 @@ void CselIRToVHDLPass::visit_prolog( Reference& value )
     //         value.getLabel(), value.getLabel(), value.getLabel(),
     //         mem->getStructure()->getType()->getSize() - 1,
     //         ( value.getCallableUnit()->isLastParameter( &value ) ? ""
-    //                                                              : "\n; " ) );
+    //                                                              : "\n; " )
+    //                                                              );
     // }
     else
     {
@@ -814,9 +818,8 @@ void CselIRToVHDLPass::visit_prolog( Reference& value )
                                                                  : "\n; " ) );
     }
     assert( !" PPA: TODO!!! " );
-
 }
-void CselIRToVHDLPass::visit_epilog( Reference& value )
+void CselIRToVHDLPass::visit_epilog( Reference& value, Context& )
 {
 }
 
@@ -824,7 +827,7 @@ void CselIRToVHDLPass::visit_epilog( Reference& value )
 // Structure
 //
 
-void CselIRToVHDLPass::visit_prolog( Structure& value )
+void CselIRToVHDLPass::visit_prolog( Structure& value, Context& )
 {
     Module* m = value.getRef< Module >();
 
@@ -858,7 +861,7 @@ void CselIRToVHDLPass::visit_prolog( Structure& value )
 
     fprintf( stream, "\n" );
 }
-void CselIRToVHDLPass::visit_epilog( Structure& value )
+void CselIRToVHDLPass::visit_epilog( Structure& value, Context& )
 {
 }
 
@@ -866,7 +869,7 @@ void CselIRToVHDLPass::visit_epilog( Structure& value )
 // Variable
 //
 
-void CselIRToVHDLPass::visit_prolog( Variable& value )
+void CselIRToVHDLPass::visit_prolog( Variable& value, Context& )
 {
     static Value n( "", Type::getTypeID(), libcsel_ir::Value::VALUE );
 
@@ -884,12 +887,12 @@ void CselIRToVHDLPass::visit_prolog( Variable& value )
             "package Variables is\n" );
     }
 
-    std::bitset< 48 > v( value.getAllocationID()->getValue()[ 0 ] );
+    std::bitset< 48 > v( value.getAllocationID()->getValue() );
 
     fprintf( stream, "  constant %s_id : %s := \"%s\";\n", value.getLabel(),
         getTypeString( n ), v.to_string().c_str() );
 }
-void CselIRToVHDLPass::visit_epilog( Variable& value )
+void CselIRToVHDLPass::visit_epilog( Variable& value, Context& )
 {
     Module* m = value.getRef< Module >();
 
@@ -905,7 +908,7 @@ void CselIRToVHDLPass::visit_epilog( Variable& value )
 // Memory
 //
 
-void CselIRToVHDLPass::visit_prolog( Memory& value )
+void CselIRToVHDLPass::visit_prolog( Memory& value, Context& )
 {
     static u1 used = false;
     assert( used == false );
@@ -958,7 +961,7 @@ void CselIRToVHDLPass::visit_prolog( Memory& value )
         "\n",
         name, name, name, name, name, value.getLength(), name );
 }
-void CselIRToVHDLPass::visit_epilog( Memory& value )
+void CselIRToVHDLPass::visit_epilog( Memory& value, Context& )
 {
 }
 
@@ -966,9 +969,9 @@ void CselIRToVHDLPass::visit_epilog( Memory& value )
 // ParallelScope
 //
 
-void CselIRToVHDLPass::visit_prolog( ParallelScope& value )
+void CselIRToVHDLPass::visit_prolog( ParallelScope& value, Context& c )
 {
-    visit_prolog( *( (SequentialScope*)( &value ) ) );
+    visit_epilog( reinterpret_cast< SequentialScope& >( value ), c );
     return;
 
     fprintf( stream,
@@ -1000,9 +1003,9 @@ void CselIRToVHDLPass::visit_prolog( ParallelScope& value )
     fprintf( stream, "  ack_%s <= transport ( %s ) after 25 ps;\n",
         value.getLabel(), cond.c_str() );
 }
-void CselIRToVHDLPass::visit_epilog( ParallelScope& value )
+void CselIRToVHDLPass::visit_epilog( ParallelScope& value, Context& c )
 {
-    visit_epilog( *( (SequentialScope*)( &value ) ) );
+    visit_epilog( reinterpret_cast< SequentialScope& >( value ), c );
     return;
 
     fprintf( stream, "  -- par '%s' end\n", value.getLabel() );
@@ -1012,7 +1015,7 @@ void CselIRToVHDLPass::visit_epilog( ParallelScope& value )
 // SequentialScope
 //
 
-void CselIRToVHDLPass::visit_prolog( SequentialScope& value )
+void CselIRToVHDLPass::visit_prolog( SequentialScope& value, Context& )
 {
     fprintf( stream,
         "\n"
@@ -1041,7 +1044,7 @@ void CselIRToVHDLPass::visit_prolog( SequentialScope& value )
     fprintf( stream, "  ack_%s <= transport ack_%s after 25 ps;\n",
         value.getLabel(), value.getBlocks().back()->getLabel() );
 }
-void CselIRToVHDLPass::visit_epilog( SequentialScope& value )
+void CselIRToVHDLPass::visit_epilog( SequentialScope& value, Context& )
 {
     fprintf( stream, "  -- seq '%s' end\n", value.getLabel() );
 }
@@ -1050,7 +1053,7 @@ void CselIRToVHDLPass::visit_epilog( SequentialScope& value )
 // TrivialStatement
 //
 
-void CselIRToVHDLPass::visit_prolog( TrivialStatement& value )
+void CselIRToVHDLPass::visit_prolog( TrivialStatement& value, Context& )
 {
     fprintf( stream,
         "\n"
@@ -1058,8 +1061,7 @@ void CselIRToVHDLPass::visit_prolog( TrivialStatement& value )
         value.getLabel() );
 
     Value* first = value.getInstructions().front();
-    while( isa< AllocInstruction >( first )
-           or isa< IdInstruction >( first ) )
+    while( isa< AllocInstruction >( first ) or isa< IdInstruction >( first ) )
     {
         first = first->getNext();
     }
@@ -1067,7 +1069,7 @@ void CselIRToVHDLPass::visit_prolog( TrivialStatement& value )
     fprintf( stream, "  sig_%s <= transport req_%s after 25 ps;\n",
         first->getLabel(), value.getLabel() );
 }
-void CselIRToVHDLPass::visit_epilog( TrivialStatement& value )
+void CselIRToVHDLPass::visit_epilog( TrivialStatement& value, Context& )
 {
     fprintf( stream,
         "  ack_%s <= transport sig_%s after 25 ps;\n"
@@ -1079,7 +1081,7 @@ void CselIRToVHDLPass::visit_epilog( TrivialStatement& value )
 // BranchStatement
 //
 
-void CselIRToVHDLPass::visit_prolog( BranchStatement& value )
+void CselIRToVHDLPass::visit_prolog( BranchStatement& value, Context& )
 {
     fprintf( stream,
         "\n"
@@ -1089,8 +1091,7 @@ void CselIRToVHDLPass::visit_prolog( BranchStatement& value )
     // emit_statement_wires( value );
 
     Value* first = value.getInstructions().front();
-    while( isa< AllocInstruction >( first )
-           or isa< IdInstruction >( first ) )
+    while( isa< AllocInstruction >( first ) or isa< IdInstruction >( first ) )
     {
         first = first->getNext();
     }
@@ -1098,7 +1099,7 @@ void CselIRToVHDLPass::visit_prolog( BranchStatement& value )
     fprintf( stream, "  sig_%s <= transport req_%s after 25 ps;\n",
         first->getLabel(), value.getLabel() );
 }
-void CselIRToVHDLPass::visit_interlog( BranchStatement& value )
+void CselIRToVHDLPass::visit_interlog( BranchStatement& value, Context& )
 {
     Value* instr = value.getInstructions().back();
     assert( instr );
@@ -1128,7 +1129,7 @@ void CselIRToVHDLPass::visit_interlog( BranchStatement& value )
             value.getLabel() );
     }
 }
-void CselIRToVHDLPass::visit_epilog( BranchStatement& value )
+void CselIRToVHDLPass::visit_epilog( BranchStatement& value, Context& )
 {
     fprintf( stream, "  -- branch statement '%s' end\n", value.getLabel() );
 }
@@ -1137,7 +1138,7 @@ void CselIRToVHDLPass::visit_epilog( BranchStatement& value )
 // LoopStatement
 //
 
-void CselIRToVHDLPass::visit_prolog( LoopStatement& value )
+void CselIRToVHDLPass::visit_prolog( LoopStatement& value, Context& )
 {
     fprintf( stream,
         "\n"
@@ -1147,8 +1148,7 @@ void CselIRToVHDLPass::visit_prolog( LoopStatement& value )
     // emit_statement_wires( value );
 
     Value* first = value.getInstructions().front();
-    while( isa< AllocInstruction >( first )
-           or isa< IdInstruction >( first ) )
+    while( isa< AllocInstruction >( first ) or isa< IdInstruction >( first ) )
     {
         first = first->getNext();
     }
@@ -1163,12 +1163,12 @@ void CselIRToVHDLPass::visit_prolog( LoopStatement& value )
         value.getLabel(), instr->getLabel(), value.getScopes()[ 0 ]->getLabel(),
         value.getScopes()[ 0 ]->getLabel() );
 }
-void CselIRToVHDLPass::visit_interlog( LoopStatement& value )
+void CselIRToVHDLPass::visit_interlog( LoopStatement& value, Context& )
 {
     fprintf(
         stream, "  -- loop statement '%s' branching;\n", value.getLabel() );
 }
-void CselIRToVHDLPass::visit_epilog( LoopStatement& value )
+void CselIRToVHDLPass::visit_epilog( LoopStatement& value, Context& )
 {
     fprintf( stream, "  -- loop statement '%s' end\n", value.getLabel() );
 }
@@ -1177,7 +1177,7 @@ void CselIRToVHDLPass::visit_epilog( LoopStatement& value )
 // CallInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( CallInstruction& value )
+void CselIRToVHDLPass::visit_prolog( CallInstruction& value, Context& )
 {
     Value* next = value.getNext();
     for( ;; )
@@ -1209,8 +1209,7 @@ void CselIRToVHDLPass::visit_prolog( CallInstruction& value )
             continue;
         }
 
-        if( isa< Reference >( v )
-            and v->getType()->getID() == Type::VECTOR )
+        if( isa< Reference >( v ) and v->getType()->getID() == Type::VECTOR )
         {
             fprintf( stream,
                 ", mem_req_%s"
@@ -1239,7 +1238,7 @@ void CselIRToVHDLPass::visit_prolog( CallInstruction& value )
 
     fprintf( stream, " ); -- call %lu\n", value.getValues().size() - 1 );
 }
-void CselIRToVHDLPass::visit_epilog( CallInstruction& value )
+void CselIRToVHDLPass::visit_epilog( CallInstruction& value, Context& )
 {
 }
 
@@ -1247,7 +1246,7 @@ void CselIRToVHDLPass::visit_epilog( CallInstruction& value )
 // IdCallInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( IdCallInstruction& value )
+void CselIRToVHDLPass::visit_prolog( IdCallInstruction& value, Context& )
 {
     fprintf( stream,
         "    \n"
@@ -1293,7 +1292,7 @@ void CselIRToVHDLPass::visit_prolog( IdCallInstruction& value )
             continue;
         }
 
-        std::bitset< 48 > bits( cu->getAllocationID()->getValue()[ 0 ] );
+        std::bitset< 48 > bits( cu->getAllocationID()->getValue() );
 
         fprintf( stream,
             "        when \"%s\" =>\n"
@@ -1322,8 +1321,7 @@ void CselIRToVHDLPass::visit_prolog( IdCallInstruction& value )
             continue;
         }
 
-        if( isa< Reference >( v )
-            and v->getType()->getID() == Type::VECTOR )
+        if( isa< Reference >( v ) and v->getType()->getID() == Type::VECTOR )
         {
             args += ", mem_req_" + std::string( v->getLabel() );
             args += ", mem_ack_" + std::string( v->getLabel() );
@@ -1370,7 +1368,7 @@ void CselIRToVHDLPass::visit_prolog( IdCallInstruction& value )
 
     fprintf( stream, "\n" );
 }
-void CselIRToVHDLPass::visit_epilog( IdCallInstruction& value )
+void CselIRToVHDLPass::visit_epilog( IdCallInstruction& value, Context& )
 {
 }
 
@@ -1378,11 +1376,11 @@ void CselIRToVHDLPass::visit_epilog( IdCallInstruction& value )
 // StreamInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( StreamInstruction& value )
+void CselIRToVHDLPass::visit_prolog( StreamInstruction& value, Context& )
 {
     TODO;
 }
-void CselIRToVHDLPass::visit_epilog( StreamInstruction& value )
+void CselIRToVHDLPass::visit_epilog( StreamInstruction& value, Context& )
 {
 }
 
@@ -1390,7 +1388,7 @@ void CselIRToVHDLPass::visit_epilog( StreamInstruction& value )
 // NopInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( NopInstruction& value )
+void CselIRToVHDLPass::visit_prolog( NopInstruction& value, Context& )
 {
     fprintf( stream,
         " -- inst_%s: %s\n"
@@ -1400,7 +1398,7 @@ void CselIRToVHDLPass::visit_prolog( NopInstruction& value )
                              : value.getStatement()->getLabel(),
         value.getLabel() );
 }
-void CselIRToVHDLPass::visit_epilog( NopInstruction& value )
+void CselIRToVHDLPass::visit_epilog( NopInstruction& value, Context& )
 {
 }
 
@@ -1408,10 +1406,10 @@ void CselIRToVHDLPass::visit_epilog( NopInstruction& value )
 // AllocInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( AllocInstruction& value )
+void CselIRToVHDLPass::visit_prolog( AllocInstruction& value, Context& )
 {
 }
-void CselIRToVHDLPass::visit_epilog( AllocInstruction& value )
+void CselIRToVHDLPass::visit_epilog( AllocInstruction& value, Context& )
 {
 }
 
@@ -1445,8 +1443,7 @@ static void instr_generic_port( Instruction& value,
             continue;
         }
 
-        if( isa< Reference >( v )
-            and v->getType()->getID() == Type::VECTOR )
+        if( isa< Reference >( v ) and v->getType()->getID() == Type::VECTOR )
         {
             fprintf( stream,
                 ", mem_req_%s"
@@ -1510,8 +1507,7 @@ static void instr_generic_port( Instruction& value,
 
     if( value.getType()->getSize() == 1 )
     {
-        if( isa< LoadInstruction >( &value )
-            or isa< AndInstruction >( &value )
+        if( isa< LoadInstruction >( &value ) or isa< AndInstruction >( &value )
             or isa< XorInstruction >( &value )
             or isa< OrInstruction >( &value )
             or isa< NotInstruction >( &value ) )
@@ -1533,10 +1529,10 @@ static void instr_generic_port( Instruction& value,
 // IdInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( IdInstruction& value )
+void CselIRToVHDLPass::visit_prolog( IdInstruction& value, Context& )
 {
 }
-void CselIRToVHDLPass::visit_epilog( IdInstruction& value )
+void CselIRToVHDLPass::visit_epilog( IdInstruction& value, Context& )
 {
 }
 
@@ -1544,13 +1540,12 @@ void CselIRToVHDLPass::visit_epilog( IdInstruction& value )
 // CastInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( CastInstruction& value )
+void CselIRToVHDLPass::visit_prolog( CastInstruction& value, Context& )
 {
     Value* kind = value.getLHS();
     Value* src = value.getRHS();
 
-    if( isa< ExtractInstruction >( src )
-        and isa< Structure >( kind )
+    if( isa< ExtractInstruction >( src ) and isa< Structure >( kind )
         // and src->getType()->getID() == Type::STRUCTURE
         )
     {
@@ -1648,7 +1643,7 @@ void CselIRToVHDLPass::visit_prolog( CastInstruction& value )
             name );
     }
 }
-void CselIRToVHDLPass::visit_epilog( CastInstruction& value )
+void CselIRToVHDLPass::visit_epilog( CastInstruction& value, Context& )
 {
 }
 
@@ -1656,7 +1651,7 @@ void CselIRToVHDLPass::visit_epilog( CastInstruction& value )
 // ExtractInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( ExtractInstruction& value )
+void CselIRToVHDLPass::visit_prolog( ExtractInstruction& value, Context& )
 {
     Value* base = value.getLHS();
     Value* offset = value.getRHS();
@@ -1675,7 +1670,6 @@ void CselIRToVHDLPass::visit_prolog( ExtractInstruction& value )
             //     value, { offset, mem->getStructure() }, "memory" );
 
             assert( !" PPA: TODO!!! " );
-
 
             return;
         }
@@ -1750,7 +1744,7 @@ void CselIRToVHDLPass::visit_prolog( ExtractInstruction& value )
             // instr_generic_port( value, { &addr, &data }, "interconnect" );
 
             assert( !" PPA: TODO!!! " );
-            
+
             return;
         }
 
@@ -1823,8 +1817,7 @@ void CselIRToVHDLPass::visit_prolog( ExtractInstruction& value )
     // 	    );
     // 	}
     // }
-    else if( ( isa< Instruction >( base )
-                 or isa< Reference >( base ) )
+    else if( ( isa< Instruction >( base ) or isa< Reference >( base ) )
              and isa< Structure >( offset )
              and base->getType()->getID() == Type::STRUCTURE )
     {
@@ -1847,7 +1840,7 @@ void CselIRToVHDLPass::visit_prolog( ExtractInstruction& value )
         assert( 0 );
     }
 }
-void CselIRToVHDLPass::visit_epilog( ExtractInstruction& value )
+void CselIRToVHDLPass::visit_epilog( ExtractInstruction& value, Context& )
 {
 }
 
@@ -1855,7 +1848,7 @@ void CselIRToVHDLPass::visit_epilog( ExtractInstruction& value )
 // LoadInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( LoadInstruction& value )
+void CselIRToVHDLPass::visit_prolog( LoadInstruction& value, Context& )
 {
     if( not instruction_implementation )
     {
@@ -1939,7 +1932,7 @@ void CselIRToVHDLPass::visit_prolog( LoadInstruction& value )
         "\n",
         name, name, name, name, name, name );
 }
-void CselIRToVHDLPass::visit_epilog( LoadInstruction& value )
+void CselIRToVHDLPass::visit_epilog( LoadInstruction& value, Context& )
 {
 }
 
@@ -1947,7 +1940,7 @@ void CselIRToVHDLPass::visit_epilog( LoadInstruction& value )
 // StoreInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( StoreInstruction& value )
+void CselIRToVHDLPass::visit_prolog( StoreInstruction& value, Context& )
 {
     i16 store_bitsize = -1;
 
@@ -1970,8 +1963,7 @@ void CselIRToVHDLPass::visit_prolog( StoreInstruction& value )
             Value* base = ext->getLHS();
             Value* offset = ext->getRHS();
 
-            if( ( isa< CastInstruction >( base )
-                    or isa< Reference >( base ) )
+            if( ( isa< CastInstruction >( base ) or isa< Reference >( base ) )
                 and isa< Structure >( offset )
                 and base->getType()->getID() == Type::STRUCTURE )
             {
@@ -2051,7 +2043,7 @@ void CselIRToVHDLPass::visit_prolog( StoreInstruction& value )
         "\n",
         name, name, name, name, name, name );
 }
-void CselIRToVHDLPass::visit_epilog( StoreInstruction& value )
+void CselIRToVHDLPass::visit_epilog( StoreInstruction& value, Context& )
 {
 }
 
@@ -2059,7 +2051,7 @@ void CselIRToVHDLPass::visit_epilog( StoreInstruction& value )
 // NotInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( NotInstruction& value )
+void CselIRToVHDLPass::visit_prolog( NotInstruction& value, Context& )
 {
     if( not instruction_implementation )
     {
@@ -2099,7 +2091,7 @@ void CselIRToVHDLPass::visit_prolog( NotInstruction& value )
         "\n",
         name, name, name, name, name, name );
 }
-void CselIRToVHDLPass::visit_epilog( NotInstruction& value )
+void CselIRToVHDLPass::visit_epilog( NotInstruction& value, Context& )
 {
 }
 
@@ -2107,7 +2099,7 @@ void CselIRToVHDLPass::visit_epilog( NotInstruction& value )
 // AndInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( AndInstruction& value )
+void CselIRToVHDLPass::visit_prolog( AndInstruction& value, Context& )
 {
     if( not instruction_implementation )
     {
@@ -2148,7 +2140,7 @@ void CselIRToVHDLPass::visit_prolog( AndInstruction& value )
         "\n",
         name, name, name, name, name, name );
 }
-void CselIRToVHDLPass::visit_epilog( AndInstruction& value )
+void CselIRToVHDLPass::visit_epilog( AndInstruction& value, Context& )
 {
 }
 
@@ -2156,7 +2148,7 @@ void CselIRToVHDLPass::visit_epilog( AndInstruction& value )
 // OrInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( OrInstruction& value )
+void CselIRToVHDLPass::visit_prolog( OrInstruction& value, Context& )
 {
     if( not instruction_implementation )
     {
@@ -2197,7 +2189,7 @@ void CselIRToVHDLPass::visit_prolog( OrInstruction& value )
         "\n",
         name, name, name, name, name, name );
 }
-void CselIRToVHDLPass::visit_epilog( OrInstruction& value )
+void CselIRToVHDLPass::visit_epilog( OrInstruction& value, Context& )
 {
 }
 
@@ -2205,7 +2197,7 @@ void CselIRToVHDLPass::visit_epilog( OrInstruction& value )
 // XorInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( XorInstruction& value )
+void CselIRToVHDLPass::visit_prolog( XorInstruction& value, Context& )
 {
     if( not instruction_implementation )
     {
@@ -2246,7 +2238,7 @@ void CselIRToVHDLPass::visit_prolog( XorInstruction& value )
         "\n",
         name, name, name, name, name, name );
 }
-void CselIRToVHDLPass::visit_epilog( XorInstruction& value )
+void CselIRToVHDLPass::visit_epilog( XorInstruction& value, Context& )
 {
 }
 
@@ -2254,7 +2246,7 @@ void CselIRToVHDLPass::visit_epilog( XorInstruction& value )
 // AddSignedInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( AddSignedInstruction& value )
+void CselIRToVHDLPass::visit_prolog( AddSignedInstruction& value, Context& )
 {
     if( not instruction_implementation )
     {
@@ -2295,7 +2287,7 @@ void CselIRToVHDLPass::visit_prolog( AddSignedInstruction& value )
         "\n",
         name, name, name, name, name, name );
 }
-void CselIRToVHDLPass::visit_epilog( AddSignedInstruction& value )
+void CselIRToVHDLPass::visit_epilog( AddSignedInstruction& value, Context& )
 {
 }
 
@@ -2303,7 +2295,7 @@ void CselIRToVHDLPass::visit_epilog( AddSignedInstruction& value )
 // DivSignedInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( DivSignedInstruction& value )
+void CselIRToVHDLPass::visit_prolog( DivSignedInstruction& value, Context& )
 {
     if( not instruction_implementation )
     {
@@ -2344,7 +2336,7 @@ void CselIRToVHDLPass::visit_prolog( DivSignedInstruction& value )
         "\n",
         name, name, name, name, name, name );
 }
-void CselIRToVHDLPass::visit_epilog( DivSignedInstruction& value )
+void CselIRToVHDLPass::visit_epilog( DivSignedInstruction& value, Context& )
 {
 }
 
@@ -2352,7 +2344,7 @@ void CselIRToVHDLPass::visit_epilog( DivSignedInstruction& value )
 // ModUnsignedInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( ModUnsignedInstruction& value )
+void CselIRToVHDLPass::visit_prolog( ModUnsignedInstruction& value, Context& )
 {
     if( not instruction_implementation )
     {
@@ -2393,7 +2385,7 @@ void CselIRToVHDLPass::visit_prolog( ModUnsignedInstruction& value )
         "\n",
         name, name, name, name, name, name );
 }
-void CselIRToVHDLPass::visit_epilog( ModUnsignedInstruction& value )
+void CselIRToVHDLPass::visit_epilog( ModUnsignedInstruction& value, Context& )
 {
 }
 
@@ -2401,7 +2393,7 @@ void CselIRToVHDLPass::visit_epilog( ModUnsignedInstruction& value )
 // EquUnsignedInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( EquUnsignedInstruction& value )
+void CselIRToVHDLPass::visit_prolog( EquUnsignedInstruction& value, Context& )
 {
     if( not instruction_implementation )
     {
@@ -2442,7 +2434,7 @@ void CselIRToVHDLPass::visit_prolog( EquUnsignedInstruction& value )
         "\n",
         name, name, name, name, name, name );
 }
-void CselIRToVHDLPass::visit_epilog( EquUnsignedInstruction& value )
+void CselIRToVHDLPass::visit_epilog( EquUnsignedInstruction& value, Context& )
 {
 }
 
@@ -2450,7 +2442,7 @@ void CselIRToVHDLPass::visit_epilog( EquUnsignedInstruction& value )
 // NeqUnsignedInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( NeqUnsignedInstruction& value )
+void CselIRToVHDLPass::visit_prolog( NeqUnsignedInstruction& value, Context& )
 {
     if( not instruction_implementation )
     {
@@ -2491,7 +2483,7 @@ void CselIRToVHDLPass::visit_prolog( NeqUnsignedInstruction& value )
         "\n",
         name, name, name, name, name, name );
 }
-void CselIRToVHDLPass::visit_epilog( NeqUnsignedInstruction& value )
+void CselIRToVHDLPass::visit_epilog( NeqUnsignedInstruction& value, Context& )
 {
 }
 
@@ -2499,7 +2491,7 @@ void CselIRToVHDLPass::visit_epilog( NeqUnsignedInstruction& value )
 // ZeroExtendInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( ZeroExtendInstruction& value )
+void CselIRToVHDLPass::visit_prolog( ZeroExtendInstruction& value, Context& )
 {
     if( not instruction_implementation )
     {
@@ -2558,7 +2550,7 @@ void CselIRToVHDLPass::visit_prolog( ZeroExtendInstruction& value )
     // , value.get()->getLabel()
     // );
 }
-void CselIRToVHDLPass::visit_epilog( ZeroExtendInstruction& value )
+void CselIRToVHDLPass::visit_epilog( ZeroExtendInstruction& value, Context& )
 {
 }
 
@@ -2566,7 +2558,7 @@ void CselIRToVHDLPass::visit_epilog( ZeroExtendInstruction& value )
 // TruncationInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( TruncationInstruction& value )
+void CselIRToVHDLPass::visit_prolog( TruncationInstruction& value, Context& )
 {
     if( not instruction_implementation )
     {
@@ -2607,7 +2599,7 @@ void CselIRToVHDLPass::visit_prolog( TruncationInstruction& value )
         "\n",
         name, name, name, name, name, name );
 }
-void CselIRToVHDLPass::visit_epilog( TruncationInstruction& value )
+void CselIRToVHDLPass::visit_epilog( TruncationInstruction& value, Context& )
 {
 }
 
@@ -2615,7 +2607,7 @@ void CselIRToVHDLPass::visit_epilog( TruncationInstruction& value )
 // BitConstant
 //
 
-void CselIRToVHDLPass::visit_prolog( BitConstant& value )
+void CselIRToVHDLPass::visit_prolog( BitConstant& value, Context& )
 {
     if( module->get< Constant >().front() == &value )
     {
@@ -2629,9 +2621,9 @@ void CselIRToVHDLPass::visit_prolog( BitConstant& value )
     }
 
     assert( !" PPA: TODO!!! " );
-    
+
     // u16 bs = value.getType()->getSize();
-    // std::bitset< 256 > v( value.getValue()[ 0 ] );
+    // std::bitset< 256 > v( value.getValue() );
     // const char* bits = &( v.to_string().c_str()[ 256 - bs ] );
     // const char* fmt = ( bs > 1 ? "\"" : "'" );
 
@@ -2649,7 +2641,7 @@ void CselIRToVHDLPass::visit_prolog( BitConstant& value )
     //         getTypeString( value ), fmt, bits, fmt );
     // }
 }
-void CselIRToVHDLPass::visit_epilog( BitConstant& value )
+void CselIRToVHDLPass::visit_epilog( BitConstant& value, Context& )
 {
     if( module->get< Constant >().back() == &value )
     {
@@ -2663,7 +2655,7 @@ void CselIRToVHDLPass::visit_epilog( BitConstant& value )
 // StructureConstant
 //
 
-void CselIRToVHDLPass::visit_prolog( StructureConstant& value )
+void CselIRToVHDLPass::visit_prolog( StructureConstant& value, Context& )
 {
     if( module->get< Constant >().front() == &value )
     {
@@ -2679,7 +2671,7 @@ void CselIRToVHDLPass::visit_prolog( StructureConstant& value )
     fprintf( stream, "  constant %s : %s := ( ", value.getLabel(),
         getTypeString( value ) );
 }
-void CselIRToVHDLPass::visit_epilog( StructureConstant& value )
+void CselIRToVHDLPass::visit_epilog( StructureConstant& value, Context& )
 {
     fprintf( stream, ");\n" );
 
@@ -2695,11 +2687,11 @@ void CselIRToVHDLPass::visit_epilog( StructureConstant& value )
 // StringConstant
 //
 
-void CselIRToVHDLPass::visit_prolog( StringConstant& value )
+void CselIRToVHDLPass::visit_prolog( StringConstant& value, Context& )
 {
     TODO;
 }
-void CselIRToVHDLPass::visit_epilog( StringConstant& value )
+void CselIRToVHDLPass::visit_epilog( StringConstant& value, Context& )
 {
 }
 
@@ -2707,7 +2699,7 @@ void CselIRToVHDLPass::visit_epilog( StringConstant& value )
 // Interconnect
 //
 
-void CselIRToVHDLPass::visit_prolog( Interconnect& value )
+void CselIRToVHDLPass::visit_prolog( Interconnect& value, Context& )
 {
     static Value n( "", Type::getTypeID(), libcsel_ir::Value::VALUE );
 
@@ -2749,12 +2741,12 @@ void CselIRToVHDLPass::visit_prolog( Interconnect& value )
         assert( !" PPA: TODO!!! " );
 
         // Variable* var = (Variable*)v;
-        
+
         // Value* ty = var->getType()->getBound();
         // assert( isa< Structure >( ty ) );
         // Structure* sty = (Structure*)ty;
 
-        // std::bitset< 48 > bits( var->getAllocationID()->getValue()[ 0 ] );
+        // std::bitset< 48 > bits( var->getAllocationID()->getValue() );
 
         // // TODO: FIXME: PPA: HACK: this needs to be generic in the future!!!
         // fprintf( stream,
@@ -2782,7 +2774,8 @@ void CselIRToVHDLPass::visit_prolog( Interconnect& value )
 
         // for( auto e : sty->getElements() )
         // {
-        //     fprintf( stream, "%s%s.%s", ( first ? "" : " & " ), var->getLabel(),
+        //     fprintf( stream, "%s%s.%s", ( first ? "" : " & " ),
+        //     var->getLabel(),
         //         e->getName() );
 
         //     if( first )
@@ -2806,7 +2799,7 @@ void CselIRToVHDLPass::visit_prolog( Interconnect& value )
         "\n",
         value.getLabel() );
 }
-void CselIRToVHDLPass::visit_epilog( Interconnect& value )
+void CselIRToVHDLPass::visit_epilog( Interconnect& value, Context& )
 {
 }
 
