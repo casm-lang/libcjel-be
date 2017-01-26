@@ -183,7 +183,7 @@ void CselIRToLLPass::visit_epilog( Structure& value, Context& )
 
 void CselIRToLLPass::visit_prolog( Variable& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( Variable& value, Context& )
 {
@@ -191,7 +191,7 @@ void CselIRToLLPass::visit_epilog( Variable& value, Context& )
 
 void CselIRToLLPass::visit_prolog( Memory& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( Memory& value, Context& )
 {
@@ -199,7 +199,7 @@ void CselIRToLLPass::visit_epilog( Memory& value, Context& )
 
 void CselIRToLLPass::visit_prolog( ParallelScope& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( ParallelScope& value, Context& )
 {
@@ -207,7 +207,7 @@ void CselIRToLLPass::visit_epilog( ParallelScope& value, Context& )
 
 void CselIRToLLPass::visit_prolog( SequentialScope& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( SequentialScope& value, Context& )
 {
@@ -215,7 +215,7 @@ void CselIRToLLPass::visit_epilog( SequentialScope& value, Context& )
 
 void CselIRToLLPass::visit_prolog( TrivialStatement& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( TrivialStatement& value, Context& )
 {
@@ -223,7 +223,7 @@ void CselIRToLLPass::visit_epilog( TrivialStatement& value, Context& )
 
 void CselIRToLLPass::visit_prolog( BranchStatement& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_interlog( BranchStatement& value, Context& )
 {
@@ -234,7 +234,7 @@ void CselIRToLLPass::visit_epilog( BranchStatement& value, Context& )
 
 void CselIRToLLPass::visit_prolog( LoopStatement& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_interlog( LoopStatement& value, Context& )
 {
@@ -245,7 +245,7 @@ void CselIRToLLPass::visit_epilog( LoopStatement& value, Context& )
 
 void CselIRToLLPass::visit_prolog( CallInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( CallInstruction& value, Context& )
 {
@@ -257,7 +257,7 @@ void CselIRToLLPass::visit_epilog( CallInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( IdCallInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
     assert( 0 );
 }
 void CselIRToLLPass::visit_epilog( IdCallInstruction& value, Context& )
@@ -270,7 +270,7 @@ void CselIRToLLPass::visit_epilog( IdCallInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( StreamInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( StreamInstruction& value, Context& )
 {
@@ -278,7 +278,7 @@ void CselIRToLLPass::visit_epilog( StreamInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( NopInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
     fprintf( stream, "    ;; nop\n" );
 }
 void CselIRToLLPass::visit_epilog( NopInstruction& value, Context& )
@@ -287,7 +287,7 @@ void CselIRToLLPass::visit_epilog( NopInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( AllocInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( AllocInstruction& value, Context& )
 {
@@ -295,7 +295,7 @@ void CselIRToLLPass::visit_epilog( AllocInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( IdInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( IdInstruction& value, Context& )
 {
@@ -307,7 +307,7 @@ void CselIRToLLPass::visit_epilog( IdInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( CastInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( CastInstruction& value, Context& )
 {
@@ -315,7 +315,7 @@ void CselIRToLLPass::visit_epilog( CastInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( ExtractInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( ExtractInstruction& value, Context& )
 {
@@ -323,7 +323,7 @@ void CselIRToLLPass::visit_epilog( ExtractInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( LoadInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( LoadInstruction& value, Context& )
 {
@@ -331,7 +331,7 @@ void CselIRToLLPass::visit_epilog( LoadInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( StoreInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( StoreInstruction& value, Context& )
 {
@@ -343,7 +343,7 @@ void CselIRToLLPass::visit_epilog( StoreInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( NotInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
     assert( 0 );
 }
 void CselIRToLLPass::visit_epilog( NotInstruction& value, Context& )
@@ -356,7 +356,7 @@ void CselIRToLLPass::visit_epilog( NotInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( AndInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
     assert( 0 );
 }
 void CselIRToLLPass::visit_epilog( AndInstruction& value, Context& )
@@ -369,7 +369,7 @@ void CselIRToLLPass::visit_epilog( AndInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( OrInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
     assert( 0 );
 }
 void CselIRToLLPass::visit_epilog( OrInstruction& value, Context& )
@@ -382,7 +382,7 @@ void CselIRToLLPass::visit_epilog( OrInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( XorInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
     assert( 0 );
 }
 void CselIRToLLPass::visit_epilog( XorInstruction& value, Context& )
@@ -391,7 +391,7 @@ void CselIRToLLPass::visit_epilog( XorInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( AddSignedInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( AddSignedInstruction& value, Context& )
 {
@@ -399,7 +399,7 @@ void CselIRToLLPass::visit_epilog( AddSignedInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( DivSignedInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( DivSignedInstruction& value, Context& )
 {
@@ -411,7 +411,7 @@ void CselIRToLLPass::visit_epilog( DivSignedInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( ModUnsignedInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( ModUnsignedInstruction& value, Context& )
 {
@@ -423,7 +423,7 @@ void CselIRToLLPass::visit_epilog( ModUnsignedInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( EquUnsignedInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( EquUnsignedInstruction& value, Context& )
 {
@@ -435,7 +435,7 @@ void CselIRToLLPass::visit_epilog( EquUnsignedInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( NeqUnsignedInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( NeqUnsignedInstruction& value, Context& )
 {
@@ -447,7 +447,7 @@ void CselIRToLLPass::visit_epilog( NeqUnsignedInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( ZeroExtendInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( ZeroExtendInstruction& value, Context& )
 {
@@ -459,7 +459,7 @@ void CselIRToLLPass::visit_epilog( ZeroExtendInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( TruncationInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( TruncationInstruction& value, Context& )
 {
@@ -467,7 +467,7 @@ void CselIRToLLPass::visit_epilog( TruncationInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( BitConstant& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( BitConstant& value, Context& )
 {
@@ -475,7 +475,7 @@ void CselIRToLLPass::visit_epilog( BitConstant& value, Context& )
 
 void CselIRToLLPass::visit_prolog( StructureConstant& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( StructureConstant& value, Context& )
 {
@@ -487,7 +487,7 @@ void CselIRToLLPass::visit_epilog( StructureConstant& value, Context& )
 
 void CselIRToLLPass::visit_prolog( StringConstant& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( StringConstant& value, Context& )
 {
@@ -499,7 +499,7 @@ void CselIRToLLPass::visit_epilog( StringConstant& value, Context& )
 
 void CselIRToLLPass::visit_prolog( Interconnect& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToLLPass::visit_epilog( Interconnect& value, Context& )
 {

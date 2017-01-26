@@ -1075,7 +1075,7 @@ void CselIRToC11Pass::visit_prolog( StoreInstruction& value, Context& )
     }
     else
     {
-        TODO;
+        // TODO;
         assert( !" unimplemented feature! " );
     }
 }
@@ -1121,7 +1121,7 @@ void CselIRToC11Pass::visit_epilog( AndInstruction& value, Context& )
 
 void CselIRToC11Pass::visit_prolog( OrInstruction& value, Context& )
 {
-    TODO;
+    // TODO;
     assert( 0 );
 }
 void CselIRToC11Pass::visit_epilog( OrInstruction& value, Context& )

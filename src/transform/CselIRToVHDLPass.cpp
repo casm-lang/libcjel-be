@@ -1378,7 +1378,7 @@ void CselIRToVHDLPass::visit_epilog( IdCallInstruction& value, Context& )
 
 void CselIRToVHDLPass::visit_prolog( StreamInstruction& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToVHDLPass::visit_epilog( StreamInstruction& value, Context& )
 {
@@ -2689,7 +2689,7 @@ void CselIRToVHDLPass::visit_epilog( StructureConstant& value, Context& )
 
 void CselIRToVHDLPass::visit_prolog( StringConstant& value, Context& )
 {
-    TODO;
+    assert(0);
 }
 void CselIRToVHDLPass::visit_epilog( StringConstant& value, Context& )
 {
