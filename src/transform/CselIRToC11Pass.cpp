@@ -1083,11 +1083,11 @@ void CselIRToC11Pass::visit_epilog( StoreInstruction& value, Context& )
 {
 }
 
-static void instr( BinaryInstruction& value, const char* op )
+static void instr( Instruction& value, const char* op )
 {
     fprintf( stream, "%s%s %s = (%s %s %s);\n", indention( value ),
-        getTypeString( value ), value.getLabel(), value.getLHS()->getLabel(),
-        op, value.getRHS()->getLabel() );
+        getTypeString( value ), value.getLabel(),
+        value.getValue( 0 )->getLabel(), op, value.getValue( 1 )->getLabel() );
 }
 
 //
@@ -1200,11 +1200,11 @@ void CselIRToC11Pass::visit_epilog( NeqInstruction& value, Context& )
 {
 }
 
-static void cast( UnaryInstruction& value, const char* comment )
+static void cast( Instruction& value, const char* comment )
 {
     fprintf( stream, "%s%s %s = (%s)%s; // %s\n", indention( value ),
         getTypeString( value ), value.getLabel(), getTypeString( value ),
-        value.get()->getLabel(), comment );
+        value.getValue( 0 )->getLabel(), comment );
 }
 
 //
