@@ -1177,26 +1177,26 @@ void CselIRToC11Pass::visit_epilog( ModUnsignedInstruction& value, Context& )
 }
 
 //
-// EquUnsignedInstruction
+// EquInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( EquUnsignedInstruction& value, Context& )
+void CselIRToC11Pass::visit_prolog( EquInstruction& value, Context& )
 {
     instr( value, "==" );
 }
-void CselIRToC11Pass::visit_epilog( EquUnsignedInstruction& value, Context& )
+void CselIRToC11Pass::visit_epilog( EquInstruction& value, Context& )
 {
 }
 
 //
-// NeqUnsignedInstruction
+// NeqInstruction
 //
 
-void CselIRToC11Pass::visit_prolog( NeqUnsignedInstruction& value, Context& )
+void CselIRToC11Pass::visit_prolog( NeqInstruction& value, Context& )
 {
     instr( value, "!=" );
 }
-void CselIRToC11Pass::visit_epilog( NeqUnsignedInstruction& value, Context& )
+void CselIRToC11Pass::visit_epilog( NeqInstruction& value, Context& )
 {
 }
 

@@ -1515,8 +1515,8 @@ static void instr_generic_port( Instruction& value,
             pre = "to_slb( t ) => ";
         }
         else if( not isa< LoadInstruction >( &value )
-                 and not isa< EquUnsignedInstruction >( &value )
-                 and not isa< NeqUnsignedInstruction >( &value ) )
+                 and not isa< EquInstruction >( &value )
+                 and not isa< NeqInstruction >( &value ) )
         {
             assert( 0 );
         }
@@ -2390,10 +2390,10 @@ void CselIRToVHDLPass::visit_epilog( ModUnsignedInstruction& value, Context& )
 }
 
 //
-// EquUnsignedInstruction
+// EquInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( EquUnsignedInstruction& value, Context& )
+void CselIRToVHDLPass::visit_prolog( EquInstruction& value, Context& )
 {
     if( not instruction_implementation )
     {
@@ -2434,15 +2434,15 @@ void CselIRToVHDLPass::visit_prolog( EquUnsignedInstruction& value, Context& )
         "\n",
         name, name, name, name, name, name );
 }
-void CselIRToVHDLPass::visit_epilog( EquUnsignedInstruction& value, Context& )
+void CselIRToVHDLPass::visit_epilog( EquInstruction& value, Context& )
 {
 }
 
 //
-// NeqUnsignedInstruction
+// NeqInstruction
 //
 
-void CselIRToVHDLPass::visit_prolog( NeqUnsignedInstruction& value, Context& )
+void CselIRToVHDLPass::visit_prolog( NeqInstruction& value, Context& )
 {
     if( not instruction_implementation )
     {
@@ -2483,7 +2483,7 @@ void CselIRToVHDLPass::visit_prolog( NeqUnsignedInstruction& value, Context& )
         "\n",
         name, name, name, name, name, name );
 }
-void CselIRToVHDLPass::visit_epilog( NeqUnsignedInstruction& value, Context& )
+void CselIRToVHDLPass::visit_epilog( NeqInstruction& value, Context& )
 {
 }
 

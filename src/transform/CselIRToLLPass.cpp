@@ -418,26 +418,26 @@ void CselIRToLLPass::visit_epilog( ModUnsignedInstruction& value, Context& )
 }
 
 //
-// EquUnsignedInstruction
+// EquInstruction
 //
 
-void CselIRToLLPass::visit_prolog( EquUnsignedInstruction& value, Context& )
+void CselIRToLLPass::visit_prolog( EquInstruction& value, Context& )
 {
     assert(0);
 }
-void CselIRToLLPass::visit_epilog( EquUnsignedInstruction& value, Context& )
+void CselIRToLLPass::visit_epilog( EquInstruction& value, Context& )
 {
 }
 
 //
-// NeqUnsignedInstruction
+// NeqInstruction
 //
 
-void CselIRToLLPass::visit_prolog( NeqUnsignedInstruction& value, Context& )
+void CselIRToLLPass::visit_prolog( NeqInstruction& value, Context& )
 {
     assert(0);
 }
-void CselIRToLLPass::visit_epilog( NeqUnsignedInstruction& value, Context& )
+void CselIRToLLPass::visit_epilog( NeqInstruction& value, Context& )
 {
 }
 
