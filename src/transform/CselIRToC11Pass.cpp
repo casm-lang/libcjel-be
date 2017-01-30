@@ -39,7 +39,7 @@ static Module* module = 0;
 
 bool CselIRToC11Pass::run( libpass::PassResult& pr )
 {
-    Module* value = (Module*)pr.getResult< libcsel_ir::CselIRDumpPass >();
+    Module* value = (Module*)pr.result< libcsel_ir::CselIRDumpPass >();
     assert( value );
     module = value;
 
@@ -177,7 +177,7 @@ void CselIRToC11Pass::visit_prolog( Function& value, Context& )
         "// Function '%s'\n"
         "%s %s\n"
         "( ",
-        value.getLabel(),
+        value.label(),
         ( strcmp( value.getName(), "main" ) == 0 ? "int" : "void" ),
         value.getName() );
 
@@ -210,17 +210,17 @@ void CselIRToC11Pass::visit_interlog( Function& value, Context& )
                 fprintf( stream,
                     "%s  %s_var = { 0 }; // linkage '%s'\n"
                     "%s* %s = &%s_var; // \n",
-                    getTypeString( *ref ), ref->getLabel(),
+                    getTypeString( *ref ), ref->label(),
                     ref->getIdentifier()->getName(), getTypeString( *ref ),
-                    ref->getLabel(), ref->getLabel()
-                    //, origin->getLabel()
+                    ref->label(), ref->label()
+                    //, origin->label()
                     );
                 // fprintf
                 // ( stream
                 // , "%s* %s = &%s; // linkage '%s'\n"
                 // , getTypeString( *ref )
-                // , ref->getLabel()
-                // , origin->getLabel()
+                // , ref->label()
+                // , origin->label()
                 // , ref->getIdentifier()->getName()
                 // );
             }
@@ -238,22 +238,22 @@ void CselIRToC11Pass::visit_interlog( Function& value, Context& )
                 // fprintf( stream,
                 //     "%s %s = malloc( sizeof( %s ) * %u ); // linkage '%s'\n"
                 //     "assert( %s );\n",
-                //     mem_type, ref->getLabel(), tmp.c_str(), mem->getSize(),
-                //     ref->getIdentifier()->getName(), ref->getLabel() );
+                //     mem_type, ref->label(), tmp.c_str(), mem->getSize(),
+                //     ref->getIdentifier()->getName(), ref->label() );
 
                 // // fprintf
                 // // ( stream
                 // // , "%s = malloc( sizeof( %s ) * %u ); // linkage '%s'\n"
                 // //   "assert( %s );\n"
                 // //   "%s* %s = %s;\n"
-                // // , mem->getLabel()
+                // // , mem->label()
                 // // , getTypeString( *mem )
                 // // , mem->getSize()
                 // // , ref->getIdentifier()->getName()
-                // // , mem->getLabel()
+                // // , mem->label()
                 // // , getTypeString( *mem )
-                // // , ref->getLabel()
-                // // , mem->getLabel()
+                // // , ref->label()
+                // // , mem->label()
                 // // );
             }
             origin = ref->getRef< Interconnect >();
@@ -272,17 +272,17 @@ void CselIRToC11Pass::visit_interlog( Function& value, Context& )
                 // fprintf( stream,
                 //     "uint64_t* %s[] = // interconnect '%s'\n"
                 //     "{ ",
-                //     ref->getLabel(), ic->getLabel() );
+                //     ref->label(), ic->label() );
                 // for( Value* v : m->get< Variable >() )
                 // {
                 //     fprintf( stream, "(uint64_t*)%s // '%s'\n%s",
-                //         v->getRef< Reference >()->getLabel(), v->getLabel(),
+                //         v->getRef< Reference >()->label(), v->label(),
                 //         m->get< Variable >().back() == v ? "" : ", " );
                 // }
                 // fprintf( stream, "};\n"
                 //     //"uint64_t*** %s = (uint64_t***)&%s_var;\n"
-                //     // , ref->getLabel()
-                //     // , ref->getLabel()
+                //     // , ref->label()
+                //     // , ref->label()
                 //     );
             }
             // assert( origin and " internal error! " );
@@ -301,8 +301,8 @@ void CselIRToC11Pass::visit_epilog( Function& value, Context& )
             Value* origin = ref->getRef< Memory >();
             if( origin )
             {
-                fprintf( stream, "free( %s ); // linkage '%s'\n",
-                    ref->getLabel(), ref->getIdentifier()->getName() );
+                fprintf( stream, "free( %s ); // linkage '%s'\n", ref->label(),
+                    ref->getIdentifier()->getName() );
             }
         }
 
@@ -322,7 +322,7 @@ void CselIRToC11Pass::visit_prolog( Intrinsic& value, Context& )
         "// Intrinsic '%s'\n"
         "static inline void %s\n"
         "( ",
-        value.getLabel(), value.getName() );
+        value.label(), value.getName() );
 
     assert( value.getLinkage().size() == 0 );
 }
@@ -359,7 +359,7 @@ void CselIRToC11Pass::visit_prolog( Reference& value, Context& )
         ( ( value.getType()->getID() == Type::STRUCTURE or value.isOutput() )
                 ? "*"
                 : "" ),
-        value.getLabel(), value.getIdentifier()->getName(), kind,
+        value.label(), value.getIdentifier()->getName(), kind,
         ( value.getCallableUnit()->isLastParameter( &value ) ? "" : "\n, " ) );
 }
 void CselIRToC11Pass::visit_epilog( Reference& value, Context& )
@@ -419,8 +419,7 @@ void CselIRToC11Pass::visit_prolog( Variable& value, Context& )
     // static u64 var_allocation = 0;
 
     fprintf( stream, "const %s %s = %lu; // '%s'\n", getTypeString( n ),
-        value.getLabel(), value.getAllocationID()->getValue(),
-        value.getIdent() );
+        value.label(), value.getAllocationID()->getValue(), value.getIdent() );
 
     // var_allocation++;
 
@@ -428,7 +427,7 @@ void CselIRToC11Pass::visit_prolog( Variable& value, Context& )
     // ( stream
     // , "%s %s = { 0 }; // '%s'\n"
     // , getTypeString( *value.getType()->getBound() )
-    // , value.getLabel()
+    // , value.label()
     // , value.getIdent()
     // );
 }
@@ -458,7 +457,7 @@ void CselIRToC11Pass::visit_prolog( Memory& value, Context& )
 
     // fprintf( stream, "//%s* %s = 0; // size = '%u'\n", getTypeString( value
     // ),
-    //     value.getLabel(), value.getSize() );
+    //     value.label(), value.getSize() );
 }
 void CselIRToC11Pass::visit_epilog( Memory& value, Context& )
 {
@@ -487,7 +486,7 @@ static void non_trivial_statement( Scope& value )
         if( branch->getScopes().front() == &value )
         {
             fprintf(
-                stream, "%sif( %s )\n", indention( value ), expr->getLabel() );
+                stream, "%sif( %s )\n", indention( value ), expr->label() );
         }
         else if( branch->getScopes().back() == &value )
         {
@@ -504,8 +503,7 @@ void CselIRToC11Pass::visit_prolog( ParallelScope& value, Context& )
 {
     non_trivial_statement( value );
 
-    fprintf(
-        stream, "%s{ // par '%s'\n", indention( value ), value.getLabel() );
+    fprintf( stream, "%s{ // par '%s'\n", indention( value ), value.label() );
 }
 void CselIRToC11Pass::visit_epilog( ParallelScope& value, Context& )
 {
@@ -520,8 +518,7 @@ void CselIRToC11Pass::visit_prolog( SequentialScope& value, Context& )
 {
     non_trivial_statement( value );
 
-    fprintf(
-        stream, "%s{ // seq '%s'\n", indention( value ), value.getLabel() );
+    fprintf( stream, "%s{ // seq '%s'\n", indention( value ), value.label() );
 }
 void CselIRToC11Pass::visit_epilog( SequentialScope& value, Context& c )
 {
@@ -537,7 +534,7 @@ void CselIRToC11Pass::visit_prolog( TrivialStatement& value, Context& )
     fprintf( stream,
         "%s// stmt '%s'\n"
         "%s{\n",
-        indention( value ), value.getLabel(), indention( value ) );
+        indention( value ), value.label(), indention( value ) );
 }
 void CselIRToC11Pass::visit_epilog( TrivialStatement& value, Context& )
 {
@@ -553,7 +550,7 @@ void CselIRToC11Pass::visit_prolog( BranchStatement& value, Context& )
     fprintf( stream,
         "%s// branch '%s'\n"
         "%s{\n",
-        indention( value ), value.getLabel(), indention( value ) );
+        indention( value ), value.label(), indention( value ) );
 }
 void CselIRToC11Pass::visit_interlog( BranchStatement& value, Context& )
 {
@@ -573,7 +570,7 @@ void CselIRToC11Pass::visit_prolog( LoopStatement& value, Context& )
         "%s// loop '%s'\n"
         "%swhile(1)\n"
         "%s{\n",
-        indention( value ), value.getLabel(), indention( value ),
+        indention( value ), value.label(), indention( value ),
         indention( value ) );
 }
 void CselIRToC11Pass::visit_interlog( LoopStatement& value, Context& )
@@ -588,7 +585,7 @@ void CselIRToC11Pass::visit_interlog( LoopStatement& value, Context& )
         "%s        break;\n"
         "%s    }\n"
         "%s    \n",
-        indention( value ), expr->getLabel(), indention( value ),
+        indention( value ), expr->label(), indention( value ),
         indention( value ), indention( value ), indention( value ) );
 }
 void CselIRToC11Pass::visit_epilog( LoopStatement& value, Context& c )
@@ -604,7 +601,7 @@ void CselIRToC11Pass::visit_prolog( CallInstruction& value, Context& )
 {
     fprintf( stream, "%s%s( ", indention( value ),
         ( isa< CastInstruction >( value.getValue( 0 ) ) )
-            ? value.getValue( 0 )->getLabel()
+            ? value.getValue( 0 )->label()
             : value.getValue( 0 )->getName() );
 
     CallableUnit* cu = 0;
@@ -681,7 +678,7 @@ void CselIRToC11Pass::visit_prolog( CallInstruction& value, Context& )
         // }
 
         fprintf( stream, "%s(%s%s%s", ( cnt > 1 ? ", " : "" ),
-            getTypeString( *v ), kind, v->getLabel() );
+            getTypeString( *v ), kind, v->label() );
         cnt++;
     }
 
@@ -702,7 +699,7 @@ void CselIRToC11Pass::visit_prolog( IdCallInstruction& value, Context& )
     fprintf( stream,
         "%sswitch( %s ) // idcall '%s'\n"
         "%s{\n",
-        indent, value.getValue( 1 )->getLabel(), value.getLabel(), indent );
+        indent, value.getValue( 1 )->label(), value.label(), indent );
 
     // TODO: FIXME: HACK: PPA: !!! should be dynamically fetched through
     // callable signature!!!
@@ -754,7 +751,7 @@ void CselIRToC11Pass::visit_prolog( IdCallInstruction& value, Context& )
         args += "(";
         args += getTypeString( *v );
         args += kind;
-        args += v->getLabel();
+        args += v->label();
     }
 
     Module* m = value.getRef< Module >();
@@ -817,7 +814,7 @@ void CselIRToC11Pass::visit_prolog( StreamInstruction& value, Context& )
         if( isa< Variable >( i ) )
         {
             fmt += "%p";
-            arg += ", &" + arg += std::string( i->getLabel() );
+            arg += ", &" + arg += std::string( i->label() );
         }
         else if( isa< StringConstant >( i ) )
         {
@@ -860,7 +857,7 @@ void CselIRToC11Pass::visit_epilog( NopInstruction& value, Context& )
 void CselIRToC11Pass::visit_prolog( AllocInstruction& value, Context& )
 {
     fprintf( stream, "%s%s %s;// alloc\n", indention( value ),
-        getTypeString( value ), value.getLabel() );
+        getTypeString( value ), value.label() );
 }
 void CselIRToC11Pass::visit_epilog( AllocInstruction& value, Context& )
 {
@@ -872,7 +869,7 @@ void CselIRToC11Pass::visit_epilog( AllocInstruction& value, Context& )
 
 void CselIRToC11Pass::visit_prolog( IdInstruction& value, Context& )
 {
-    const char* id = value.get()->getLabel();
+    const char* id = value.get()->label();
 
     if( isa< CallableUnit >( value.get() ) )
     {
@@ -882,7 +879,7 @@ void CselIRToC11Pass::visit_prolog( IdInstruction& value, Context& )
     }
 
     fprintf( stream, "%s%s %s = (%s)%s;// id\n", indention( value ),
-        getTypeString( value ), value.getLabel(), getTypeString( value ), id );
+        getTypeString( value ), value.label(), getTypeString( value ), id );
 }
 void CselIRToC11Pass::visit_epilog( IdInstruction& value, Context& )
 {
@@ -901,7 +898,7 @@ void CselIRToC11Pass::visit_prolog( CastInstruction& value, Context& )
     {
         // TODO: FIXME: use 'kind' func signature to create better casts!
         fprintf( stream, "%svoid (*%s)() = (void (*)())%s;// cast Function\n",
-            indention( value ), value.getLabel(), src->getLabel() );
+            indention( value ), value.label(), src->label() );
     }
     else if( isa< Structure >( kind ) )
     {
@@ -909,12 +906,12 @@ void CselIRToC11Pass::visit_prolog( CastInstruction& value, Context& )
             //, "%s%s %s = *((%s*)%s%s);\n"
             ,
             "%s%s* %s = (%s*)(%s%s); // cast Structure\n", indention( value ),
-            getTypeString( value ), value.getLabel(), getTypeString( value ),
+            getTypeString( value ), value.label(), getTypeString( value ),
             ( isa< Reference >( src )
                 and src->getType()->getID() == Type::STRUCTURE )
                 ? "*"
                 : "",
-            src->getLabel() );
+            src->label() );
     }
     else
     {
@@ -940,8 +937,8 @@ void CselIRToC11Pass::visit_prolog( ExtractInstruction& value, Context& )
 
         fprintf( stream,
             "%s%s* %s = &(%s.%s); // extract (T1) [instr+struct]\n",
-            indention( value ), getTypeString( value ), value.getLabel(),
-            base_->getLabel(), offset->getName() );
+            indention( value ), getTypeString( value ), value.label(),
+            base_->label(), offset->getName() );
         return;
     }
 
@@ -958,8 +955,8 @@ void CselIRToC11Pass::visit_prolog( ExtractInstruction& value, Context& )
         }
 
         fprintf( stream, "%s%s* %s = &(%s->%s); // extract (T2) '%s'\n",
-            indention( value ), getTypeString( value ), value.getLabel(),
-            base->getLabel(), offset->getName(),
+            indention( value ), getTypeString( value ), value.label(),
+            base->label(), offset->getName(),
             base->getIdentifier()->getName() );
     }
     else if( isa< Reference >( offset_ ) )
@@ -968,16 +965,16 @@ void CselIRToC11Pass::visit_prolog( ExtractInstruction& value, Context& )
         assert( base->getType()->getID() == Type::INTERCONNECT );
 
         fprintf( stream, "%s%s* %s = (%s*)(%s[%s]); // extract (T3) '%s'\n",
-            indention( value ), getTypeString( value ), value.getLabel(),
-            getTypeString( value ), base->getLabel(), offset->getLabel(),
+            indention( value ), getTypeString( value ), value.label(),
+            getTypeString( value ), base->label(), offset->label(),
             base->getIdentifier()->getName() );
     }
     else if( isa< Instruction >( offset_ ) )
     {
         fprintf( stream,
             "%svoid* %s = (void*)(&%s[%s]); // extract (T4) '%s'\n",
-            indention( value ), value.getLabel(), base->getLabel(),
-            offset_->getLabel(), base->getIdentifier()->getName() );
+            indention( value ), value.label(), base->label(), offset_->label(),
+            base->getIdentifier()->getName() );
     }
     else
     {
@@ -999,7 +996,7 @@ void CselIRToC11Pass::visit_prolog( LoadInstruction& value, Context& )
     if( isa< ExtractInstruction >( addr_ ) or isa< CastInstruction >( addr_ ) )
     {
         fprintf( stream, "%s%s %s = *%s; // load\n", indention( value ),
-            getTypeString( value ), value.getLabel(), addr_->getLabel() );
+            getTypeString( value ), value.label(), addr_->label() );
     }
     else
     {
@@ -1022,8 +1019,8 @@ void CselIRToC11Pass::visit_prolog( LoadInstruction& value, Context& )
     //     , "%s%s %s = %s->%s; // load '%s'\n"
     //     , indention( value )
     //     , getTypeString( value )
-    //     , value.getLabel()
-    //     , ref->getLabel()
+    //     , value.label()
+    //     , ref->label()
     //     , str->getName()
     //     , ref->getIdentifier()->getName()
     //     );
@@ -1037,9 +1034,9 @@ void CselIRToC11Pass::visit_prolog( LoadInstruction& value, Context& )
     // 	, "%s(uint64_t*) %s = %s[%s]; // load '%s'\n" // TODO: FIXME: PPA: HACK:
     // !!!
     //     , indention( value )
-    //     , value.getLabel()
-    //     , ref->getLabel()
-    //     , off->getLabel()
+    //     , value.label()
+    //     , ref->label()
+    //     , off->label()
     //     , ref->getIdentifier()->getName()
     //     );
     // }
@@ -1060,8 +1057,8 @@ void CselIRToC11Pass::visit_prolog( StoreInstruction& value, Context& )
     if( isa< ExtractInstruction >( dst ) )
     {
         fprintf( stream, "%s*%s = %s%s; // store '%s'\n", indention( value ),
-            dst->getLabel(), ( isa< ExtractInstruction >( src ) ? "*" : "" ),
-            src->getLabel(), value.getLabel() );
+            dst->label(), ( isa< ExtractInstruction >( src ) ? "*" : "" ),
+            src->label(), value.label() );
     }
     else if( isa< Reference >( dst ) )
     {
@@ -1069,9 +1066,9 @@ void CselIRToC11Pass::visit_prolog( StoreInstruction& value, Context& )
         assert( ref );
 
         fprintf( stream, "%s*%s = %s%s; // store '%s' ['%s']\n",
-            indention( value ), ref->getLabel(),
-            ( isa< CastInstruction >( src ) ? "*" : "" ), src->getLabel(),
-            value.getLabel(), ref->getIdentifier()->getName() );
+            indention( value ), ref->label(),
+            ( isa< CastInstruction >( src ) ? "*" : "" ), src->label(),
+            value.label(), ref->getIdentifier()->getName() );
     }
     else
     {
@@ -1086,8 +1083,8 @@ void CselIRToC11Pass::visit_epilog( StoreInstruction& value, Context& )
 static void instr( Instruction& value, const char* op )
 {
     fprintf( stream, "%s%s %s = (%s %s %s);\n", indention( value ),
-        getTypeString( value ), value.getLabel(),
-        value.getValue( 0 )->getLabel(), op, value.getValue( 1 )->getLabel() );
+        getTypeString( value ), value.label(), value.getValue( 0 )->label(), op,
+        value.getValue( 1 )->label() );
 }
 
 //
@@ -1097,7 +1094,7 @@ static void instr( Instruction& value, const char* op )
 void CselIRToC11Pass::visit_prolog( NotInstruction& value, Context& )
 {
     fprintf( stream, "%s%s %s = (~ %s);\n", indention( value ),
-        getTypeString( value ), value.getLabel(), value.get()->getLabel() );
+        getTypeString( value ), value.label(), value.get()->label() );
 }
 void CselIRToC11Pass::visit_epilog( NotInstruction& value, Context& )
 {
@@ -1203,8 +1200,8 @@ void CselIRToC11Pass::visit_epilog( NeqInstruction& value, Context& )
 static void cast( Instruction& value, const char* comment )
 {
     fprintf( stream, "%s%s %s = (%s)%s; // %s\n", indention( value ),
-        getTypeString( value ), value.getLabel(), getTypeString( value ),
-        value.getValue( 0 )->getLabel(), comment );
+        getTypeString( value ), value.label(), getTypeString( value ),
+        value.getValue( 0 )->label(), comment );
 }
 
 //
@@ -1220,7 +1217,7 @@ void CselIRToC11Pass::visit_prolog( ZeroExtendInstruction& value, Context& )
     else
     {
         fprintf( stream, "%s%s* %s = %s; // %s\n", indention( value ),
-            getTypeString( value ), value.getLabel(), value.get()->getLabel(),
+            getTypeString( value ), value.label(), value.get()->label(),
             "zext" );
     }
 }
@@ -1241,7 +1238,7 @@ void CselIRToC11Pass::visit_prolog( TruncationInstruction& value, Context& )
     // else
     {
         fprintf( stream, "%s%s %s = %s; // %s\n", indention( value ),
-            getTypeString( value ), value.getLabel(), value.get()->getLabel(),
+            getTypeString( value ), value.label(), value.get()->label(),
             "trunc" );
     }
 }
@@ -1273,7 +1270,7 @@ void CselIRToC11Pass::visit_prolog( BitConstant& value, Context& )
     // else
     // {
     //     fprintf( stream, "const %s %s = %lu;\n", getTypeString( value ),
-    //         value.getLabel(), value.getValue()[ 0 ] );
+    //         value.label(), value.getValue()[ 0 ] );
     // }
 }
 void CselIRToC11Pass::visit_epilog( BitConstant& value, Context& )
@@ -1300,7 +1297,7 @@ void CselIRToC11Pass::visit_prolog( StructureConstant& value, Context& )
     // }
 
     // fprintf(
-    //     stream, "const %s %s = { ", getTypeString( value ), value.getLabel()
+    //     stream, "const %s %s = { ", getTypeString( value ), value.label()
     //     );
 }
 void CselIRToC11Pass::visit_epilog( StructureConstant& value, Context& )
@@ -1333,7 +1330,7 @@ void CselIRToC11Pass::visit_prolog( StringConstant& value, Context& )
     // else
     // {
     //     fprintf( stream, "const %s %s = \"%s\";\n", getTypeString( value ),
-    //         value.getLabel(), value.getValue() );
+    //         value.label(), value.getValue() );
     // }
 }
 void CselIRToC11Pass::visit_epilog( StringConstant& value, Context& )
