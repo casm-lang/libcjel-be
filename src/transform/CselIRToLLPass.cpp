@@ -40,7 +40,7 @@ bool CselIRToLLPass::run( libpass::PassResult& pr )
     Module* value = (Module*)pr.result< libcsel_ir::CselIRDumpPass >();
     assert( value );
 
-    std::string fn = "obj/" + std::string( value->getName() ) + ".vhd";
+    std::string fn = "obj/" + std::string( value->name() ) + ".vhd";
     stream = fopen( fn.c_str(), "w" );
 
     value->iterate( Traversal::PREORDER, this );
@@ -53,9 +53,9 @@ bool CselIRToLLPass::run( libpass::PassResult& pr )
     return false;
 }
 
-static const char* getTypeString( Value& value )
+static const char* typeString( Value& value )
 {
-    // Type* type = value.getType();
+    // Type* type = value.type();
     // assert( type );
 
     // if( type->getIDKind() == Type::ID::BIT )
@@ -66,7 +66,7 @@ static const char* getTypeString( Value& value )
     // else if( type->getIDKind() == Type::ID::STRUCTURE )
     // {
     //     assert( isa< Structure >( &value ) );
-    //     return ( (Structure*)&value )->getIdentifier()->getName();
+    //     return ( (Structure*)&value )->identifier()->name();
     // }
     // else
     // {
@@ -83,14 +83,14 @@ void CselIRToLLPass::visit_prolog( Module& value, Context& )
         "; ModuleID = '%s'\n"
         ";; begin of module: '%s'\n"
         "\n",
-        value.getName(), value.getName() );
+        value.name(), value.name() );
 }
 void CselIRToLLPass::visit_epilog( Module& value, Context& )
 {
     fprintf( stdout,
         ";; end of module: '%s'\n"
         "\n",
-        value.getName() );
+        value.name() );
 }
 
 void CselIRToLLPass::visit_prolog( Function& value, Context& )
@@ -98,7 +98,7 @@ void CselIRToLLPass::visit_prolog( Function& value, Context& )
     fprintf( stdout,
         "define void @%s ;; Function\n"
         "( ",
-        value.getName() );
+        value.name() );
 }
 void CselIRToLLPass::visit_interlog( Function& value, Context& )
 {
@@ -120,7 +120,7 @@ void CselIRToLLPass::visit_prolog( Intrinsic& value, Context& )
     fprintf( stdout,
         "define void @%s ;; Intrinsic\n"
         "( ",
-        value.getName() );
+        value.name() );
 }
 void CselIRToLLPass::visit_interlog( Intrinsic& value, Context& )
 {
@@ -137,10 +137,10 @@ void CselIRToLLPass::visit_epilog( Intrinsic& value, Context& )
 void CselIRToLLPass::visit_prolog( Reference& value, Context& )
 {
     fprintf( stdout, "%s %%%s%s",
-        "i32" // value.getType()->getName() // TODO: FIXME!!!
+        "i32" // value.type().name() // TODO: FIXME!!!
         ,
-        value.getIdentifier()->getName(),
-        ( value.getCallableUnit()->isLastParameter( &value ) ? "" : "\n, " ) );
+        value.identifier()->name(),
+        ( value.callableUnit()->isLastParameter( &value ) ? "" : "\n, " ) );
 }
 void CselIRToLLPass::visit_epilog( Reference& value, Context& )
 {
@@ -148,7 +148,7 @@ void CselIRToLLPass::visit_epilog( Reference& value, Context& )
 
 void CselIRToLLPass::visit_prolog( Structure& value, Context& )
 {
-    if( value.getElements().size() == 0 )
+    if( value.elements().size() == 0 )
     {
         // all bit types can be represented in LLVM IR directly!
         return;
@@ -158,24 +158,23 @@ void CselIRToLLPass::visit_prolog( Structure& value, Context& )
         ";; begin of structure: '%s'\n"
         "%%%s = type\n"
         "{ ",
-        value.getIdentifier()->getName(), value.getIdentifier()->getName() );
+        value.identifier()->name(), value.identifier()->name() );
 
     u16 cnt = 0;
-    for( const Structure* s : value.getElements() )
+    for( const Structure* s : value.elements() )
     {
         cnt++;
 
-        fprintf( stdout, "%s%s ;; %s\n%s", getTypeString( *( (Value*)s ) ),
-            s->getElements().size() > 0 ? "*" : "",
-            s->getIdentifier()->getName(),
-            cnt < value.getElements().size() ? ", " : "" );
+        fprintf( stdout, "%s%s ;; %s\n%s", typeString( *( (Value*)s ) ),
+            s->elements().size() > 0 ? "*" : "", s->identifier()->name(),
+            cnt < value.elements().size() ? ", " : "" );
     }
 
     fprintf( stdout,
         "}\n"
         ";; end of structure: '%s'\n"
         "\n",
-        value.getIdentifier()->getName() );
+        value.identifier()->name() );
 }
 void CselIRToLLPass::visit_epilog( Structure& value, Context& )
 {
