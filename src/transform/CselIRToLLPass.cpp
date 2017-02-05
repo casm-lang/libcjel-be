@@ -388,6 +388,22 @@ void CselIRToLLPass::visit_epilog( XorInstruction& value, Context& )
 {
 }
 
+//
+// AddUnsignedInstruction
+//
+
+void CselIRToLLPass::visit_prolog( AddUnsignedInstruction& value, Context& )
+{
+    assert( 0 );
+}
+void CselIRToLLPass::visit_epilog( AddUnsignedInstruction& value, Context& )
+{
+}
+
+//
+// AddSignedInstruction
+//
+
 void CselIRToLLPass::visit_prolog( AddSignedInstruction& value, Context& )
 {
     assert( 0 );
@@ -395,6 +411,10 @@ void CselIRToLLPass::visit_prolog( AddSignedInstruction& value, Context& )
 void CselIRToLLPass::visit_epilog( AddSignedInstruction& value, Context& )
 {
 }
+
+//
+// DivSignedInstruction
+//
 
 void CselIRToLLPass::visit_prolog( DivSignedInstruction& value, Context& )
 {

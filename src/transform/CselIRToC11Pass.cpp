@@ -1125,12 +1125,26 @@ void CselIRToC11Pass::visit_epilog( XorInstruction& value, Context& )
 }
 
 //
+// AddUnsignedInstruction
+//
+
+void CselIRToC11Pass::visit_prolog( AddUnsignedInstruction& value, Context& )
+{
+    // TODO;
+    assert( 0 );
+}
+void CselIRToC11Pass::visit_epilog( AddUnsignedInstruction& value, Context& )
+{
+}
+
+//
 // AddSignedInstruction
 //
 
 void CselIRToC11Pass::visit_prolog( AddSignedInstruction& value, Context& )
 {
-    instr( value, "+" );
+    // TODO;
+    assert( 0 );
 }
 void CselIRToC11Pass::visit_epilog( AddSignedInstruction& value, Context& )
 {

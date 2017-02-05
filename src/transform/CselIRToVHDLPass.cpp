@@ -2229,6 +2229,18 @@ void CselIRToVHDLPass::visit_epilog( XorInstruction& value, Context& )
 }
 
 //
+// AddUnsignedInstruction
+//
+
+void CselIRToVHDLPass::visit_prolog( AddUnsignedInstruction& value, Context& )
+{
+    assert( 0 );
+}
+void CselIRToVHDLPass::visit_epilog( AddUnsignedInstruction& value, Context& )
+{
+}
+
+//
 // AddSignedInstruction
 //
 
