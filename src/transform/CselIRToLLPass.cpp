@@ -257,7 +257,6 @@ void CselIRToLLPass::visit_epilog( CallInstruction& value, Context& )
 void CselIRToLLPass::visit_prolog( IdCallInstruction& value, Context& )
 {
     assert( 0 );
-    assert( 0 );
 }
 void CselIRToLLPass::visit_epilog( IdCallInstruction& value, Context& )
 {
@@ -343,9 +342,20 @@ void CselIRToLLPass::visit_epilog( StoreInstruction& value, Context& )
 void CselIRToLLPass::visit_prolog( NotInstruction& value, Context& )
 {
     assert( 0 );
-    assert( 0 );
 }
 void CselIRToLLPass::visit_epilog( NotInstruction& value, Context& )
+{
+}
+
+//
+// LnotInstruction
+//
+
+void CselIRToLLPass::visit_prolog( LnotInstruction& value, Context& )
+{
+    assert( 0 );
+}
+void CselIRToLLPass::visit_epilog( LnotInstruction& value, Context& )
 {
 }
 
@@ -355,7 +365,6 @@ void CselIRToLLPass::visit_epilog( NotInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( AndInstruction& value, Context& )
 {
-    assert( 0 );
     assert( 0 );
 }
 void CselIRToLLPass::visit_epilog( AndInstruction& value, Context& )
@@ -369,7 +378,6 @@ void CselIRToLLPass::visit_epilog( AndInstruction& value, Context& )
 void CselIRToLLPass::visit_prolog( OrInstruction& value, Context& )
 {
     assert( 0 );
-    assert( 0 );
 }
 void CselIRToLLPass::visit_epilog( OrInstruction& value, Context& )
 {
@@ -381,7 +389,6 @@ void CselIRToLLPass::visit_epilog( OrInstruction& value, Context& )
 
 void CselIRToLLPass::visit_prolog( XorInstruction& value, Context& )
 {
-    assert( 0 );
     assert( 0 );
 }
 void CselIRToLLPass::visit_epilog( XorInstruction& value, Context& )

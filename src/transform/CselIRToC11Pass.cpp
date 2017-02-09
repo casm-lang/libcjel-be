@@ -1088,6 +1088,18 @@ void CselIRToC11Pass::visit_epilog( NotInstruction& value, Context& )
 }
 
 //
+// LnotInstruction
+//
+
+void CselIRToC11Pass::visit_prolog( LnotInstruction& value, Context& )
+{
+    assert( !" TODO! " );
+}
+void CselIRToC11Pass::visit_epilog( LnotInstruction& value, Context& )
+{
+}
+
+//
 // AndInstruction
 //
 

@@ -2082,6 +2082,18 @@ void CselIRToVHDLPass::visit_epilog( NotInstruction& value, Context& )
 }
 
 //
+// LnotInstruction
+//
+
+void CselIRToVHDLPass::visit_prolog( LnotInstruction& value, Context& )
+{
+    assert( 0 );
+}
+void CselIRToVHDLPass::visit_epilog( LnotInstruction& value, Context& )
+{
+}
+
+//
 // AndInstruction
 //
 
