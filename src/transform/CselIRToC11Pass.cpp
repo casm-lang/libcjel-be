@@ -415,7 +415,7 @@ void CselIRToC11Pass::visit_prolog( Variable& value, Context& )
     // static u64 var_allocation = 0;
 
     fprintf( stream, "const %s %s = %lu; // '%s'\n", typeString( n ),
-        value.label(), value.allocId()->value(), value.ident() );
+        value.label(), value.allocId().value(), value.ident() );
 
     // var_allocation++;
 
@@ -763,7 +763,7 @@ void CselIRToC11Pass::visit_prolog( IdCallInstruction& value, Context& )
         // call argument types!!!
 
         fprintf( stream, "%s    case %lu: { %s( %s ); break; }\n", indent,
-            cu->allocId()->value(), cu->name(), args.c_str() );
+            cu->allocId().value(), cu->name(), args.c_str() );
     }
 
     fprintf( stream,
@@ -863,7 +863,7 @@ void CselIRToC11Pass::visit_prolog( IdInstruction& value, Context& )
     if( isa< CallableUnit >( value.get() ) )
     {
         CallableUnit* c = (CallableUnit*)value.get();
-        u64 id_num = c->allocId()->value();
+        u64 id_num = c->allocId().value();
         id = libstdhl::Allocator::string( std::to_string( id_num ) );
     }
 

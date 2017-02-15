@@ -141,13 +141,13 @@ static void emit_statement_wires( Statement& value )
             if( isa< CallableUnit >( id_kind ) )
             {
                 std::bitset< 48 > v(
-                    ( (CallableUnit*)id_kind )->allocId()->value() );
+                    ( (CallableUnit*)id_kind )->allocId().value() );
                 id = v.to_string().c_str();
             }
             else if( isa< Variable >( id_instr->get() ) )
             {
                 std::bitset< 48 > v(
-                    ( (Variable*)id_kind )->allocId()->value() );
+                    ( (Variable*)id_kind )->allocId().value() );
                 id = v.to_string().c_str();
             }
             else
@@ -881,7 +881,7 @@ void CselIRToVHDLPass::visit_prolog( Variable& value, Context& )
             "package Variables is\n" );
     }
 
-    std::bitset< 48 > v( value.allocId()->value() );
+    std::bitset< 48 > v( value.allocId().value() );
 
     fprintf( stream, "  constant %s_id : %s := \"%s\";\n", value.label(),
         typeString( n ), v.to_string().c_str() );
@@ -1280,7 +1280,7 @@ void CselIRToVHDLPass::visit_prolog( IdCallInstruction& value, Context& )
             continue;
         }
 
-        std::bitset< 48 > bits( cu->allocId()->value() );
+        std::bitset< 48 > bits( cu->allocId().value() );
 
         fprintf( stream,
             "        when \"%s\" =>\n"
