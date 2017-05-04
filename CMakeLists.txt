@@ -78,28 +78,34 @@ add_library( ${TARGET}-test OBJECT
 
 add_executable( ${TARGET}-check
   ${LIBS}/gtest/googletest/src/gtest_main.cc
-  ${LIBS}/gtest/googletest/src/gtest-all.cc  
+  ${LIBS}/gtest/googletest/src/gtest-all.cc
   $<TARGET_OBJECTS:${TARGET}-test>
 )
 
 target_link_libraries( ${TARGET}-check
   ${TARGET}
-  pthread
-  stdhl
-  pass
   csel-ir
+  pass
+  stdhl
+  pthread
 )
 
 
 add_library( ${TARGET}-benchmark OBJECT
-  ${LIBS}/hayai/src/hayai_posix_main.cpp
+  uts/main.cpp
 )
-  
+
 add_executable( ${TARGET}-run
+  ${LIBS}/hayai/src/hayai_posix_main.cpp
+  ${LIBS}/gtest/googletest/src/gtest-all.cc
   $<TARGET_OBJECTS:${TARGET}-benchmark>
 )
 
 target_link_libraries( ${TARGET}-run
+  ${TARGET}
+  csel-ir
+  pass
+  stdhl
   pthread
 )
 
