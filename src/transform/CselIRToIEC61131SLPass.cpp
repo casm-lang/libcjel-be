@@ -21,16 +21,16 @@
 //  along with libcsel-be. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "CselIRToPLC_IEC61131_3SL_Pass.h"
+#include "CselIRToIEC61131SLPass.h"
 
 #include "../csel-ir/src/analyze/CselIRDumpPass.h"
 
 using namespace libcsel_ir;
 using namespace libcsel_be;
 
-char CselIRToPLC_IEC61131_3SL_Pass::id = 0;
+char CselIRToIEC61131SLPass::id = 0;
 
-static libpass::PassRegistration< CselIRToPLC_IEC61131_3SL_Pass > PASS(
+static libpass::PassRegistration< CselIRToIEC61131SLPass > PASS(
     "CselToPLL-IEC-61131-3-SLPass",
     "generates structural language code (IEC 61131-3 SL) out of the CSEL IR",
     "el2iec61131-3-sl", 0 );
@@ -39,21 +39,20 @@ static FILE* stream = stderr;
 
 static Module* module = 0;
 
-bool CselIRToPLC_IEC61131_3SL_Pass::run( libpass::PassResult& pr )
+bool CselIRToIEC61131SLPass::run( libpass::PassResult& pr )
 {
-    Module* value = (Module*)pr.result< libcsel_ir::CselIRDumpPass >();
-    assert( value );
-    module = value;
+    const auto data = pr.result< libcsel_ir::CselIRDumpPass >();
+    const auto module = data->module();
 
-    std::string fn = "obj/" + std::string( value->name() ) + ".vhd";
-    stream = fopen( fn.c_str(), "w" );
+    std::string fn = "obj/" + std::string( module->name() ) + ".iec61131.sl";
+    // stream = fopen( fn.c_str(), "w" );
 
-    value->iterate( Traversal::PREORDER, this );
+    module->iterate( Traversal::PREORDER, this );
 
-    if( fclose( stream ) )
-    {
-        fprintf( stderr, "error: unable to close file stream\n" );
-    }
+    // if( fclose( stream ) )
+    // {
+    //     fprintf( stderr, "error: unable to close file stream\n" );
+    // }
 
     return false;
 }
@@ -62,11 +61,11 @@ bool CselIRToPLC_IEC61131_3SL_Pass::run( libpass::PassResult& pr )
 // Module
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog( Module& value, Context& c )
+void CselIRToIEC61131SLPass::visit_prolog( Module& value, Context& c )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog( Module& value, Context& )
+void CselIRToIEC61131SLPass::visit_epilog( Module& value, Context& )
 {
 }
 
@@ -74,11 +73,11 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog( Module& value, Context& )
 // Function
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog( Function& value, Context& )
+void CselIRToIEC61131SLPass::visit_prolog( Function& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog( Function& value, Context& )
+void CselIRToIEC61131SLPass::visit_epilog( Function& value, Context& )
 {
 }
 
@@ -86,15 +85,15 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog( Function& value, Context& )
 // Intrinsic
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog( Intrinsic& value, Context& )
+void CselIRToIEC61131SLPass::visit_prolog( Intrinsic& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_interlog(
+void CselIRToIEC61131SLPass::visit_interlog(
     Intrinsic& value, Context& c )
 {
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog( Intrinsic& value, Context& c )
+void CselIRToIEC61131SLPass::visit_epilog( Intrinsic& value, Context& c )
 {
 }
 
@@ -102,11 +101,11 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog( Intrinsic& value, Context& c )
 // Reference
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog( Reference& value, Context& )
+void CselIRToIEC61131SLPass::visit_prolog( Reference& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog( Reference& value, Context& )
+void CselIRToIEC61131SLPass::visit_epilog( Reference& value, Context& )
 {
 }
 
@@ -114,11 +113,11 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog( Reference& value, Context& )
 // Structure
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog( Structure& value, Context& )
+void CselIRToIEC61131SLPass::visit_prolog( Structure& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog( Structure& value, Context& )
+void CselIRToIEC61131SLPass::visit_epilog( Structure& value, Context& )
 {
 }
 
@@ -126,11 +125,11 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog( Structure& value, Context& )
 // Variable
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog( Variable& value, Context& )
+void CselIRToIEC61131SLPass::visit_prolog( Variable& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog( Variable& value, Context& )
+void CselIRToIEC61131SLPass::visit_epilog( Variable& value, Context& )
 {
 }
 
@@ -138,11 +137,11 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog( Variable& value, Context& )
 // Memory
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog( Memory& value, Context& )
+void CselIRToIEC61131SLPass::visit_prolog( Memory& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog( Memory& value, Context& )
+void CselIRToIEC61131SLPass::visit_epilog( Memory& value, Context& )
 {
 }
 
@@ -150,12 +149,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog( Memory& value, Context& )
 // ParallelScope
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     ParallelScope& value, Context& c )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     ParallelScope& value, Context& c )
 {
 }
@@ -164,12 +163,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // SequentialScope
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     SequentialScope& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     SequentialScope& value, Context& )
 {
 }
@@ -178,12 +177,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // TrivialStatement
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     TrivialStatement& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     TrivialStatement& value, Context& )
 {
 }
@@ -192,16 +191,16 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // BranchStatement
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     BranchStatement& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_interlog(
+void CselIRToIEC61131SLPass::visit_interlog(
     BranchStatement& value, Context& )
 {
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     BranchStatement& value, Context& )
 {
 }
@@ -210,16 +209,16 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // LoopStatement
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     LoopStatement& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_interlog(
+void CselIRToIEC61131SLPass::visit_interlog(
     LoopStatement& value, Context& )
 {
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     LoopStatement& value, Context& )
 {
 }
@@ -228,12 +227,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // CallInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     CallInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     CallInstruction& value, Context& )
 {
 }
@@ -242,12 +241,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // IdCallInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     IdCallInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     IdCallInstruction& value, Context& )
 {
 }
@@ -256,12 +255,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // StreamInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     StreamInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     StreamInstruction& value, Context& )
 {
 }
@@ -270,12 +269,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // NopInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     NopInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     NopInstruction& value, Context& )
 {
 }
@@ -284,12 +283,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // AllocInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     AllocInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     AllocInstruction& value, Context& )
 {
 }
@@ -298,12 +297,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // IdInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     IdInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     IdInstruction& value, Context& )
 {
 }
@@ -312,12 +311,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // CastInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     CastInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     CastInstruction& value, Context& )
 {
 }
@@ -326,12 +325,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // ExtractInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     ExtractInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     ExtractInstruction& value, Context& )
 {
 }
@@ -340,12 +339,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // LoadInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     LoadInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     LoadInstruction& value, Context& )
 {
 }
@@ -354,12 +353,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // StoreInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     StoreInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     StoreInstruction& value, Context& )
 {
 }
@@ -368,12 +367,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // NotInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     NotInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     NotInstruction& value, Context& )
 {
 }
@@ -382,12 +381,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // LnotInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     LnotInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     LnotInstruction& value, Context& )
 {
 }
@@ -396,12 +395,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // AndInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     AndInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     AndInstruction& value, Context& )
 {
 }
@@ -410,12 +409,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // OrInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     OrInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     OrInstruction& value, Context& )
 {
 }
@@ -424,12 +423,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // XorInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     XorInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     XorInstruction& value, Context& )
 {
 }
@@ -438,12 +437,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // AddUnsignedInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     AddUnsignedInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     AddUnsignedInstruction& value, Context& )
 {
 }
@@ -452,12 +451,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // AddSignedInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     AddSignedInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     AddSignedInstruction& value, Context& )
 {
 }
@@ -466,12 +465,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // DivSignedInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     DivSignedInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     DivSignedInstruction& value, Context& )
 {
 }
@@ -480,12 +479,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // ModUnsignedInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     ModUnsignedInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     ModUnsignedInstruction& value, Context& )
 {
 }
@@ -494,12 +493,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // EquInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     EquInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     EquInstruction& value, Context& )
 {
 }
@@ -508,12 +507,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // NeqInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     NeqInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     NeqInstruction& value, Context& )
 {
 }
@@ -522,12 +521,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // ZeroExtendInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     ZeroExtendInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     ZeroExtendInstruction& value, Context& )
 {
 }
@@ -536,12 +535,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // TruncationInstruction
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     TruncationInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     TruncationInstruction& value, Context& )
 {
 }
@@ -550,11 +549,11 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // BitConstant
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog( BitConstant& value, Context& )
+void CselIRToIEC61131SLPass::visit_prolog( BitConstant& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog( BitConstant& value, Context& )
+void CselIRToIEC61131SLPass::visit_epilog( BitConstant& value, Context& )
 {
 }
 
@@ -562,12 +561,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog( BitConstant& value, Context& )
 // StructureConstant
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     StructureConstant& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     StructureConstant& value, Context& )
 {
 }
@@ -576,12 +575,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // StringConstant
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     StringConstant& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     StringConstant& value, Context& )
 {
 }
@@ -590,12 +589,12 @@ void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
 // Interconnect
 //
 
-void CselIRToPLC_IEC61131_3SL_Pass::visit_prolog(
+void CselIRToIEC61131SLPass::visit_prolog(
     Interconnect& value, Context& )
 {
     assert( 0 );
 }
-void CselIRToPLC_IEC61131_3SL_Pass::visit_epilog(
+void CselIRToIEC61131SLPass::visit_epilog(
     Interconnect& value, Context& )
 {
 }

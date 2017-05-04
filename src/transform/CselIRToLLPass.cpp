@@ -33,114 +33,88 @@ char CselIRToLLPass::id = 0;
 static libpass::PassRegistration< CselIRToLLPass > PASS( "CSEL IR to LLVM IR",
     "generates LLVM IR code out of the CSEL IR", "el2ll", 0 );
 
-static FILE* stream = stderr;
-
 bool CselIRToLLPass::run( libpass::PassResult& pr )
 {
-    Module* value = (Module*)pr.result< libcsel_ir::CselIRDumpPass >();
-    assert( value );
+    const auto data = pr.result< libcsel_ir::CselIRDumpPass >();
+    const auto module = data->module();
 
-    std::string fn = "obj/" + std::string( value->name() ) + ".vhd";
-    stream = fopen( fn.c_str(), "w" );
+    std::string fn = "obj/" + std::string( module->name() ) + ".vhd";
+    // stream = fopen( fn.c_str(), "w" );
 
-    value->iterate( Traversal::PREORDER, this );
+    module->iterate( Traversal::PREORDER, this );
 
-    if( fclose( stream ) )
-    {
-        fprintf( stderr, "error: unable to close file stream\n" );
-    }
+    // if( fclose( stream ) )
+    // {
+    //     fprintf( stderr, "error: unable to close file stream\n" );
+    // }
 
     return false;
 }
 
-static const char* typeString( Value& value )
-{
-    // Type* type = value.type();
-    // assert( type );
-
-    // if( type->getIDKind() == Type::ID::BIT )
-    // {
-    //     std::string t = "i" + std::to_string( type->getBitsize() );
-    //     return t.c_str();
-    // }
-    // else if( type->getIDKind() == Type::ID::STRUCTURE )
-    // {
-    //     assert( isa< Structure >( &value ) );
-    //     return ( (Structure*)&value )->identifier()->name();
-    // }
-    // else
-    // {
-    //     assert( !"unimplemented or unsupported type to convert!" );
-    // }
-
-    assert( !" PPA: TODO!!! " );
-    return 0;
-}
-
 void CselIRToLLPass::visit_prolog( Module& value, Context& )
 {
-    fprintf( stdout,
-        "; ModuleID = '%s'\n"
-        ";; begin of module: '%s'\n"
-        "\n",
-        value.name(), value.name() );
+    // fprintf( stdout,
+    //     "; ModuleID = '%s'\n"
+    //     ";; begin of module: '%s'\n"
+    //     "\n",
+    //     value.name(), value.name() );
 }
 void CselIRToLLPass::visit_epilog( Module& value, Context& )
 {
-    fprintf( stdout,
-        ";; end of module: '%s'\n"
-        "\n",
-        value.name() );
+    // fprintf( stdout,
+    //     ";; end of module: '%s'\n"
+    //     "\n",
+    //     value.name() );
 }
 
 void CselIRToLLPass::visit_prolog( Function& value, Context& )
 {
-    fprintf( stdout,
-        "define void @%s ;; Function\n"
-        "( ",
-        value.name() );
+    // fprintf( stdout,
+    //     "define void @%s ;; Function\n"
+    //     "( ",
+    //     value.name() );
 }
 void CselIRToLLPass::visit_interlog( Function& value, Context& )
 {
-    fprintf( stdout,
-        "\n)\n"
-        "{\n"
-        "begin:\n" );
+    // fprintf( stdout,
+    //     "\n)\n"
+    //     "{\n"
+    //     "begin:\n" );
 }
 void CselIRToLLPass::visit_epilog( Function& value, Context& )
 {
-    fprintf( stdout,
-        "  ret void\n"
-        "}\n"
-        "\n" );
+    // fprintf( stdout,
+    //     "  ret void\n"
+    //     "}\n"
+    //     "\n" );
 }
 
 void CselIRToLLPass::visit_prolog( Intrinsic& value, Context& )
 {
-    fprintf( stdout,
-        "define void @%s ;; Intrinsic\n"
-        "( ",
-        value.name() );
+    // fprintf( stdout,
+    //     "define void @%s ;; Intrinsic\n"
+    //     "( ",
+    //     value.name() );
 }
 void CselIRToLLPass::visit_interlog( Intrinsic& value, Context& )
 {
-    fprintf( stdout, "\n)\n{\nbegin:\n" );
+    // fprintf( stdout, "\n)\n{\nbegin:\n" );
 }
 void CselIRToLLPass::visit_epilog( Intrinsic& value, Context& )
 {
-    fprintf( stdout,
-        "  ret void\n"
-        "}\n"
-        "\n" );
+    // fprintf( stdout,
+    //     "  ret void\n"
+    //     "}\n"
+    //     "\n" );
 }
 
 void CselIRToLLPass::visit_prolog( Reference& value, Context& )
 {
-    fprintf( stdout, "%s %%%s%s",
-        "i32" // value.type().name() // TODO: FIXME!!!
-        ,
-        value.identifier()->name(),
-        ( value.callableUnit()->isLastParameter( &value ) ? "" : "\n, " ) );
+    // fprintf( stdout, "%s %%%s%s",
+    //     "i32" // value.type().name() // TODO: FIXME!!!
+    //     ,
+    //     value.identifier()->name(),
+    //     ( value.callableUnit()->isLastParameter( &value ) ? "" : "\n, " ) );
 }
 void CselIRToLLPass::visit_epilog( Reference& value, Context& )
 {
@@ -148,33 +122,33 @@ void CselIRToLLPass::visit_epilog( Reference& value, Context& )
 
 void CselIRToLLPass::visit_prolog( Structure& value, Context& )
 {
-    if( value.elements().size() == 0 )
-    {
-        // all bit types can be represented in LLVM IR directly!
-        return;
-    }
+    // if( value.elements().size() == 0 )
+    // {
+    //     // all bit types can be represented in LLVM IR directly!
+    //     return;
+    // }
 
-    fprintf( stdout,
-        ";; begin of structure: '%s'\n"
-        "%%%s = type\n"
-        "{ ",
-        value.identifier()->name(), value.identifier()->name() );
+    // fprintf( stdout,
+    //     ";; begin of structure: '%s'\n"
+    //     "%%%s = type\n"
+    //     "{ ",
+    //     value.identifier()->name(), value.identifier()->name() );
 
-    u16 cnt = 0;
-    for( const Structure* s : value.elements() )
-    {
-        cnt++;
+    // u16 cnt = 0;
+    // for( const Structure* s : value.elements() )
+    // {
+    //     cnt++;
 
-        fprintf( stdout, "%s%s ;; %s\n%s", typeString( *( (Value*)s ) ),
-            s->elements().size() > 0 ? "*" : "", s->identifier()->name(),
-            cnt < value.elements().size() ? ", " : "" );
-    }
+    //     fprintf( stdout, "%s%s ;; %s\n%s", typeString( *( (Value*)s ) ),
+    //         s->elements().size() > 0 ? "*" : "", s->identifier()->name(),
+    //         cnt < value.elements().size() ? ", " : "" );
+    // }
 
-    fprintf( stdout,
-        "}\n"
-        ";; end of structure: '%s'\n"
-        "\n",
-        value.identifier()->name() );
+    // fprintf( stdout,
+    //     "}\n"
+    //     ";; end of structure: '%s'\n"
+    //     "\n",
+    //     value.identifier()->name() );
 }
 void CselIRToLLPass::visit_epilog( Structure& value, Context& )
 {
@@ -277,7 +251,7 @@ void CselIRToLLPass::visit_epilog( StreamInstruction& value, Context& )
 void CselIRToLLPass::visit_prolog( NopInstruction& value, Context& )
 {
     assert( 0 );
-    fprintf( stream, "    ;; nop\n" );
+    // fprintf( stream, "    ;; nop\n" );
 }
 void CselIRToLLPass::visit_epilog( NopInstruction& value, Context& )
 {
