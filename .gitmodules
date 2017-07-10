@@ -11,5 +11,5 @@
 	path = lib/pass
 	url = https://github.com/ppaulweber/libpass
 [submodule "lib/csel-ir"]
-	path = lib/csel-ir
-	url = git@github.com:casm-lang/libcsel-ir
+	path = lib/cjel-ir
+	url = git@github.com:casm-lang/libcjel-ir

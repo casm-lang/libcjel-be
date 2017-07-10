@@ -3,35 +3,35 @@
 //  All rights reserved.
 //
 //  Developed by: Philipp Paulweber
-//                https://github.com/casm-lang/libcsel-be
+//                https://github.com/casm-lang/libcjel-be
 //
-//  This file is part of libcsel-be.
+//  This file is part of libcjel-be.
 //
-//  libcsel-be is free software: you can redistribute it and/or modify
+//  libcjel-be is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
 //
-//  libcsel-be is distributed in the hope that it will be useful,
+//  libcjel-be is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //  GNU General Public License for more details.
 //
 //  You should have received a copy of the GNU General Public License
-//  along with libcsel-be. If not, see <http://www.gnu.org/licenses/>.
+//  along with libcjel-be. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef _LIB_CSELBE_CSELBE_H_
-#define _LIB_CSELBE_CSELBE_H_
+#ifndef _LIB_CJELBE_CJELBE_H_
+#define _LIB_CJELBE_CJELBE_H_
 
-namespace libcsel_be
+namespace libcjel_be
 {
-    class CselBE
+    class CjelBE
     {
     };
 }
 
-#endif /* _LIB_CSELBE_CSELBE_H_ */
+#endif /* _LIB_CJELBE_CJELBE_H_ */
 
 //
 //  Local variables:
