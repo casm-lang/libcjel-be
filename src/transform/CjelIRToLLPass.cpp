@@ -41,30 +41,32 @@
 
 #include "CjelIRToLLPass.h"
 
-#include "../cjel-ir/src/analyze/CjelIRDumpPass.h"
+#include <libcjel-ir/analyze/CjelIRDumpPass>
+
+#include <libpass/PassRegistry>
 
 using namespace libcjel_ir;
 using namespace libcjel_be;
 
 char CjelIRToLLPass::id = 0;
 
-static libpass::PassRegistration< CjelIRToLLPass > PASS( "CJEL IR to LLVM IR",
-    "generates LLVM IR code out of the CJEL IR", "el2ll", 0 );
+static libpass::PassRegistration< CjelIRToLLPass > PASS(
+    "CJEL IR to LLVM IR", "generates LLVM IR code out of the CJEL IR", "el2ll", 0 );
 
 bool CjelIRToLLPass::run( libpass::PassResult& pr )
 {
-    const auto data = pr.result< libcjel_ir::CjelIRDumpPass >();
-    const auto module = data->module();
+    // const auto data = pr.result< libcjel_ir::CjelIRDumpPass >();
+    // const auto module = data->module();
 
-    std::string fn = "obj/" + std::string( module->name() ) + ".vhd";
-    // stream = fopen( fn.c_str(), "w" );
+    // std::string fn = "obj/" + std::string( module->name() ) + ".vhd";
+    // // stream = fopen( fn.c_str(), "w" );
 
-    module->iterate( Traversal::PREORDER, this );
+    // module->iterate( Traversal::PREORDER, this );
 
-    // if( fclose( stream ) )
-    // {
-    //     fprintf( stderr, "error: unable to close file stream\n" );
-    // }
+    // // if( fclose( stream ) )
+    // // {
+    // //     fprintf( stderr, "error: unable to close file stream\n" );
+    // // }
 
     return false;
 }
@@ -180,11 +182,11 @@ void CjelIRToLLPass::visit_epilog( Variable& value, Context& )
 {
 }
 
-void CjelIRToLLPass::visit_prolog( Memory& value, Context& )
+void CjelIRToLLPass::visit_prolog( libcjel_ir::Memory& value, Context& )
 {
     assert( 0 );
 }
-void CjelIRToLLPass::visit_epilog( Memory& value, Context& )
+void CjelIRToLLPass::visit_epilog( libcjel_ir::Memory& value, Context& )
 {
 }
 

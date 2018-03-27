@@ -39,8 +39,30 @@
 //  statement from your version.
 //
 
-#include "gtest/gtest.h"
+#ifndef _LIBCJEL_BE_H_
+#define _LIBCJEL_BE_H_
 
-TEST( libcjel_be, example )
+#include <libcjel-be/CjelBE>
+#include <libcjel-be/Version>
+#include <libcjel-be/transform/CjelIRToC11Pass>
+#include <libcjel-be/transform/CjelIRToLLPass>
+#include <libcjel-be/transform/CjelIRToVHDLPass>
+
+namespace libcjel_be
 {
 }
+
+#define TODO \
+    fprintf( stdout, "%s:%i: '%s' implementation TODO\n", __FILE__, __LINE__, __FUNCTION__ )
+
+#endif  // _LIBCJEL_BE_H_
+
+//
+//  Local variables:
+//  mode: c++
+//  indent-tabs-mode: nil
+//  c-basic-offset: 4
+//  tab-width: 4
+//  End:
+//  vim:noexpandtab:sw=4:ts=4:
+//

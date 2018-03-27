@@ -39,12 +39,14 @@
 //  statement from your version.
 //
 
-#ifndef _LIB_CJELBE_TO_IEC61131_SL_PASS_H_
-#define _LIB_CJELBE_TO_IEC61131_SL_PASS_H_
+#ifndef _LIBCJEL_BE_TO_IEC61131_SL_PASS_H_
+#define _LIBCJEL_BE_TO_IEC61131_SL_PASS_H_
 
-#include "libpass.h"
+#include <libpass/Pass>
+#include <libpass/PassData>
+#include <libpass/PassResult>
 
-#include "../cjel-ir/src/Visitor.h"
+#include <libcjel-ir/Visitor>
 
 /**
 
@@ -58,19 +60,20 @@
 
 namespace libcjel_be
 {
-    class CjelIRToIEC61131SLPass final : public libpass::Pass,
-                                         public libcjel_ir::Visitor
+    class CjelIRToIEC61131SLPass final
+    : public libpass::Pass
+    , public libcjel_ir::Visitor
     {
       public:
         static char id;
 
         bool run( libpass::PassResult& pr ) override;
 
-        LIB_CJELIR_VISITOR_INTERFACE;
+        LIBCJEL_IR_VISITOR_INTERFACE;
     };
 }
 
-#endif // _LIB_CJELBE_TO_IEC61131_SL_PASS_H_
+#endif  // _LIBCJEL_BE_TO_IEC61131_SL_PASS_H_
 
 //
 //  Local variables:

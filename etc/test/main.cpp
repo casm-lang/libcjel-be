@@ -39,14 +39,23 @@
 //  statement from your version.
 //
 
-#ifndef _LIB_CJELBE_UTS_MAIN_H_
-#define _LIB_CJELBE_UTS_MAIN_H_
+#include "main.h"
 
-#include "../stdhl/uts/main.h"
+void libcjel_be_main_dummy( void )
+{
+    const auto source =
+        libstdhl::Memory::make< libstdhl::Log::Source >( "libcjel-be", "CJEL BE Library" );
+    libstdhl::Log::defaultSource( source );
+}
 
-#include "libcjel-be.h"
-
-#endif // _LIB_CJELBE_UTS_MAIN_H_
+TEST( libcjel_be_main, empty )
+{
+    std::cout << libcjel_be::REVTAG << "\n";
+    std::cout << libcjel_be::COMMIT << "\n";
+    std::cout << libcjel_be::BRANCH << "\n";
+    std::cout << libcjel_be::LICENSE << "\n";
+    std::cout << libcjel_be::NOTICE << "\n";
+}
 
 //
 //  Local variables:

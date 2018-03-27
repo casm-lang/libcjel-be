@@ -41,7 +41,9 @@
 
 #include "CjelIRToC11Pass.h"
 
-#include "../cjel-ir/src/analyze/CjelIRDumpPass.h"
+#include <libcjel-ir/analyze/CjelIRDumpPass>
+
+#include <libpass/PassRegistry>
 
 using namespace libcjel_ir;
 using namespace libcjel_be;
@@ -57,18 +59,18 @@ static Module* module = 0;
 
 bool CjelIRToC11Pass::run( libpass::PassResult& pr )
 {
-    auto data = pr.result< libcjel_ir::CjelIRDumpPass >();
-    module = data->module().get();
+    // auto data = pr.result< libcjel_ir::CjelIRDumpPass >();
+    // module = data->module().get();
 
-    std::string fn = "obj/" + module->name() + ".c";
-    // file_stream = fopen( fn.c_str(), "w" );
+    // std::string fn = "obj/" + module->name() + ".c";
+    // // file_stream = fopen( fn.c_str(), "w" );
 
-    module->iterate( Traversal::PREORDER, this );
+    // module->iterate( Traversal::PREORDER, this );
 
-    // if( fclose( file_stream ) )
-    // {
-    //     fprintf( stderr, "error: unable to close file stream\n" );
-    // }
+    // // if( fclose( file_stream ) )
+    // // {
+    // //     fprintf( stderr, "error: unable to close file stream\n" );
+    // // }
 
     return false;
 }
@@ -170,7 +172,8 @@ void CjelIRToC11Pass::visit_prolog( Module& value, Context& )
     stamp = std::chrono::system_clock::now();
     std::time_t timestamp = std::chrono::system_clock::to_time_t( stamp );
 
-    fprintf( file_stream,
+    fprintf(
+        file_stream,
         "// Generated At: %s"
         "// Module: '%s'\n"
         "\n"
@@ -179,7 +182,8 @@ void CjelIRToC11Pass::visit_prolog( Module& value, Context& )
         "#include <stdint.h>\n"
         "#include <assert.h>\n"
         "\n",
-        std::ctime( &timestamp ), value.name().c_str() );
+        std::ctime( &timestamp ),
+        value.name().c_str() );
 }
 void CjelIRToC11Pass::visit_epilog( Module& value, Context& )
 {
@@ -464,7 +468,7 @@ void CjelIRToC11Pass::visit_epilog( Variable& value, Context& )
 // Memory
 //
 
-void CjelIRToC11Pass::visit_prolog( Memory& value, Context& )
+void CjelIRToC11Pass::visit_prolog( libcjel_ir::Memory& value, Context& )
 {
     // Module* m = value.ref< Module >();
     // if( m->get< Memory >().front() == &value )
@@ -479,7 +483,7 @@ void CjelIRToC11Pass::visit_prolog( Memory& value, Context& )
     // // ),
     // //     value.label(), value.bitsize() );
 }
-void CjelIRToC11Pass::visit_epilog( Memory& value, Context& )
+void CjelIRToC11Pass::visit_epilog( libcjel_ir::Memory& value, Context& )
 {
     // Module* m = value.ref< Module >();
     // if( m->get< Memory >().back() == &value )

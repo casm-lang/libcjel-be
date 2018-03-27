@@ -39,24 +39,11 @@
 //  statement from your version.
 //
 
-#ifndef _LIB_CJELBE_H_
-#define _LIB_CJELBE_H_
+#include <hayai/hayai.hpp>
 
-#include "src/CjelBE.h"
-
-#include "src/transform/CjelIRToC11Pass.h"
-#include "src/transform/CjelIRToLLPass.h"
-#include "src/transform/CjelIRToVHDLPass.h"
-
-namespace libcjel_be
+BENCHMARK( libcjel_be, main, 0, 0 )
 {
 }
-
-#define TODO                                                                   \
-    fprintf( stdout, "%s:%i: '%s' implementation TODO\n", __FILE__, __LINE__,  \
-        __FUNCTION__ )
-
-#endif /* _LIB_CJELBE_H_ */
 
 //
 //  Local variables:

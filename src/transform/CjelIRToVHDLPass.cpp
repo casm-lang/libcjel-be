@@ -41,7 +41,9 @@
 
 #include "CjelIRToVHDLPass.h"
 
-#include "../cjel-ir/src/analyze/CjelIRDumpPass.h"
+#include <libcjel-ir/analyze/CjelIRDumpPass>
+
+#include <libpass/PassRegistry>
 
 using namespace libcjel_ir;
 using namespace libcjel_be;
@@ -53,18 +55,18 @@ static libpass::PassRegistration< CjelIRToVHDLPass > PASS(
 
 bool CjelIRToVHDLPass::run( libpass::PassResult& pr )
 {
-    const auto data = pr.result< libcjel_ir::CjelIRDumpPass >();
-    const auto module = data->module();
+    // const auto data = pr.result< libcjel_ir::CjelIRDumpPass >();
+    // const auto module = data->module();
 
-    std::string fn = "obj/" + std::string( module->name() ) + ".vhd";
-    // stream = fopen( fn.c_str(), "w" );
+    // std::string fn = "obj/" + std::string( module->name() ) + ".vhd";
+    // // stream = fopen( fn.c_str(), "w" );
 
-    module->iterate( Traversal::PREORDER, this );
+    // module->iterate( Traversal::PREORDER, this );
 
-    // if( fclose( stream ) )
-    // {
-    //     fprintf( stderr, "error: unable to close file stream\n" );
-    // }
+    // // if( fclose( stream ) )
+    // // {
+    // //     fprintf( stderr, "error: unable to close file stream\n" );
+    // // }
 
     return false;
 }
@@ -927,7 +929,7 @@ void CjelIRToVHDLPass::visit_epilog( Variable& value, Context& )
 // Memory
 //
 
-void CjelIRToVHDLPass::visit_prolog( Memory& value, Context& )
+void CjelIRToVHDLPass::visit_prolog( libcjel_ir::Memory& value, Context& )
 {
     // static u1 used = false;
     // assert( used == false );
@@ -981,7 +983,7 @@ void CjelIRToVHDLPass::visit_prolog( Memory& value, Context& )
     //     "\n",
     //     name, name, name, name, name, value.length(), name );
 }
-void CjelIRToVHDLPass::visit_epilog( Memory& value, Context& )
+void CjelIRToVHDLPass::visit_epilog( libcjel_ir::Memory& value, Context& )
 {
 }
 

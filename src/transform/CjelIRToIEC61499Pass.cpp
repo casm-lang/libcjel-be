@@ -41,7 +41,9 @@
 
 #include "CjelIRToIEC61499Pass.h"
 
-#include "../cjel-ir/src/analyze/CjelIRDumpPass.h"
+#include <libcjel-ir/analyze/CjelIRDumpPass>
+
+#include <libpass/PassRegistry>
 
 using namespace libcjel_ir;
 using namespace libcjel_be;
@@ -51,22 +53,23 @@ char CjelIRToIEC61499Pass::id = 0;
 static libpass::PassRegistration< CjelIRToIEC61499Pass > PASS(
     "CjelIRToIEC61499Pass",
     "generates configuration code (IEC 61499) out of the CJEL IR",
-    "el2iec61499", 0 );
+    "el2iec61499",
+    0 );
 
 bool CjelIRToIEC61499Pass::run( libpass::PassResult& pr )
 {
-    const auto data = pr.result< libcjel_ir::CjelIRDumpPass >();
-    const auto module = data->module();
+    // const auto data = pr.result< libcjel_ir::CjelIRDumpPass >();
+    // const auto module = data->module();
 
-    std::string fn = "obj/" + std::string( module->name() ) + ".iec61499.dtd";
-    // stream = fopen( fn.c_str(), "w" );
+    // std::string fn = "obj/" + std::string( module->name() ) + ".iec61499.dtd";
+    // // stream = fopen( fn.c_str(), "w" );
 
-    module->iterate( Traversal::PREORDER, this );
+    // module->iterate( Traversal::PREORDER, this );
 
-    // if( fclose( stream ) )
-    // {
-    //     fprintf( stderr, "error: unable to close file stream\n" );
-    // }
+    // // if( fclose( stream ) )
+    // // {
+    // //     fprintf( stderr, "error: unable to close file stream\n" );
+    // // }
 
     return false;
 }
@@ -150,11 +153,11 @@ void CjelIRToIEC61499Pass::visit_epilog( Variable& value, Context& )
 // Memory
 //
 
-void CjelIRToIEC61499Pass::visit_prolog( Memory& value, Context& )
+void CjelIRToIEC61499Pass::visit_prolog( libcjel_ir::Memory& value, Context& )
 {
     assert( 0 );
 }
-void CjelIRToIEC61499Pass::visit_epilog( Memory& value, Context& )
+void CjelIRToIEC61499Pass::visit_epilog( libcjel_ir::Memory& value, Context& )
 {
 }
 
@@ -408,13 +411,11 @@ void CjelIRToIEC61499Pass::visit_epilog( XorInstruction& value, Context& )
 // AddUnsignedInstruction
 //
 
-void CjelIRToIEC61499Pass::visit_prolog(
-    AddUnsignedInstruction& value, Context& )
+void CjelIRToIEC61499Pass::visit_prolog( AddUnsignedInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CjelIRToIEC61499Pass::visit_epilog(
-    AddUnsignedInstruction& value, Context& )
+void CjelIRToIEC61499Pass::visit_epilog( AddUnsignedInstruction& value, Context& )
 {
 }
 
@@ -446,13 +447,11 @@ void CjelIRToIEC61499Pass::visit_epilog( DivSignedInstruction& value, Context& )
 // ModUnsignedInstruction
 //
 
-void CjelIRToIEC61499Pass::visit_prolog(
-    ModUnsignedInstruction& value, Context& )
+void CjelIRToIEC61499Pass::visit_prolog( ModUnsignedInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CjelIRToIEC61499Pass::visit_epilog(
-    ModUnsignedInstruction& value, Context& )
+void CjelIRToIEC61499Pass::visit_epilog( ModUnsignedInstruction& value, Context& )
 {
 }
 
@@ -484,13 +483,11 @@ void CjelIRToIEC61499Pass::visit_epilog( NeqInstruction& value, Context& )
 // ZeroExtendInstruction
 //
 
-void CjelIRToIEC61499Pass::visit_prolog(
-    ZeroExtendInstruction& value, Context& )
+void CjelIRToIEC61499Pass::visit_prolog( ZeroExtendInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CjelIRToIEC61499Pass::visit_epilog(
-    ZeroExtendInstruction& value, Context& )
+void CjelIRToIEC61499Pass::visit_epilog( ZeroExtendInstruction& value, Context& )
 {
 }
 
@@ -498,13 +495,11 @@ void CjelIRToIEC61499Pass::visit_epilog(
 // TruncationInstruction
 //
 
-void CjelIRToIEC61499Pass::visit_prolog(
-    TruncationInstruction& value, Context& )
+void CjelIRToIEC61499Pass::visit_prolog( TruncationInstruction& value, Context& )
 {
     assert( 0 );
 }
-void CjelIRToIEC61499Pass::visit_epilog(
-    TruncationInstruction& value, Context& )
+void CjelIRToIEC61499Pass::visit_epilog( TruncationInstruction& value, Context& )
 {
 }
 
