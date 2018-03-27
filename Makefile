@@ -39,6 +39,14 @@
 #   statement from your version.
 #
 
-TARGET = cjel-be
+TARGET = libcjel-be
 
-include .config.mk
+FORMAT  = src
+FORMAT += src/*
+FORMAT += etc
+FORMAT += etc/*
+FORMAT += etc/*/*
+
+UPDATE_ROOT = ../stdhl
+
+include .cmake/config.mk
